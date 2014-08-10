@@ -239,8 +239,6 @@ void serialEvent() {
 	while (Serial.available()) {
 		// get the new byte:
 		char inChar = (char) Serial.read();
-		//try out the json reader here
-		jsonreader.process_char(inChar);
 
 		// add it to the inputString:
 		inputSerialArray[inputSerialPos]=inChar;
@@ -249,15 +247,11 @@ void serialEvent() {
 		if (inChar == '\n' || inChar == '\r' || inputSerialPos>98) {
 			//null to mark this array end
 			inputSerialArray[inputSerialPos]='\0';
-			//process(inputSerialArray, ',');
+			process(inputSerialArray, ',');
 			Serial.println(inputSerialArray);
 			inputSerialPos=0;
 			memset(inputSerialArray, 0, sizeof(inputSerialArray));
-			//and also dump out the json
-			Serial.print(F("jsonreader.results[0] = "));
-			Serial.println(jsonreader.results[0]);
-			Serial.print(F("jsonreader.results[1] = "));
-			Serial.println(jsonreader.results[1]);
+
 		}
 		//Serial.println(inputSerialArray);
 
