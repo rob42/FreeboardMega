@@ -1,0 +1,769 @@
+/*
+ * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
+ *
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * SignalkModel.cpp
+ *
+ *  Created on: Aug 2, 2014
+ *      Author: robert
+ */
+
+#include "SignalkModel.h"
+
+SignalkModel::SignalkModel() {
+
+	navigation.courseOverGroundMagnetic = 0.0;
+	navigation.courseOverGroundTrue = 0.0;
+	navigation.currentRoute.bearingActual = 0.0;
+	navigation.currentRoute.bearingDirect = 0.0;
+	navigation.currentRoute.courseRequired = 0.0;
+	navigation.currentRoute.eta = 0;
+	navigation.currentRoute.route = "";
+	navigation.currentRoute.startTime =0;
+	navigation.currentRoute.waypoint.lastTime = 0;
+	navigation.currentRoute.waypoint.last ="";
+	navigation.currentRoute.waypoint.nextEta = 0;
+	navigation.currentRoute.waypoint.next = "";
+	navigation.currentRoute.waypoint.xte = 0.0;
+	navigation.magneticVariation  = 0.0;
+	navigation.destination.eta =0;
+	navigation.destination.longitude = 0.0;
+	navigation.destination.latitude = 0.0;
+	navigation.destination.altitude = 0.0;
+	navigation.drift = 0.0;
+	//navigation.gnss
+	navigation.headingMagnetic = 0.0;
+	navigation.headingTrue = 0.0;
+	navigation.position.longitude = 0.0;
+	navigation.position.latitude = 0.0;
+	navigation.position.altitude = 0.0;
+	navigation.pitch = 0.0;
+	navigation.rateOfTurn = 0.0;
+	navigation.roll = 0.0;
+	navigation.set = 0.0;
+	navigation.speedOverGround = 0.0;
+	navigation.speedThroughWater = 0.0;
+	navigation.state= NAV_NOT_DEFINED;
+	steering.rudderAngle = 0.0;
+	steering.rudderAngleTarget = 0.0;
+	steering.autopilot.state=AP_OFF;
+	steering.autopilot.mode=AP_NORMAL;
+	steering.autopilot.targetHeadingNorth = 0.0;
+	steering.autopilot.targetHeadingMagnetic = 0.0;
+	steering.autopilot.alarmHeadingXte = 0.0;
+	steering.autopilot.headingSource = AP_COMPASS;
+	steering.autopilot.deadZone = 0.0;
+	steering.autopilot.backlash = 0.0;
+	steering.autopilot.gain = 0.0;
+	steering.autopilot.maxDriveAmps = 0.0;
+	steering.autopilot.maxDriveRate = 0.0;
+	steering.autopilot.portLock = 0.0;
+	steering.autopilot.starboardLock = 0.0;
+	alarms.anchorAlarmMethod = ALRM_SOUND;
+	alarms.anchorAlarmState = ALRM_DISABLED;
+	alarms.autopilotAlarmMethod = ALRM_SOUND;
+	alarms.autopilotAlarmState = ALRM_DISABLED;
+	alarms.engineAlarmMethod = ALRM_SOUND;
+	alarms.engineAlarmState = ALRM_DISABLED;
+	alarms.fireAlarmMethod = ALRM_SOUND;
+	alarms.fireAlarmState = ALRM_DISABLED;
+	alarms.gasAlarmMethod = ALRM_SOUND;
+	alarms.gasAlarmState = ALRM_DISABLED;
+	alarms.gpsAlarmMethod = ALRM_SOUND;
+	alarms.gpsAlarmState = ALRM_DISABLED;
+	alarms.maydayAlarmMethod = ALRM_SOUND;
+	alarms.maydayAlarmState = ALRM_DISABLED;
+	alarms.panpanAlarmMethod = ALRM_SOUND;
+	alarms.panpanAlarmState = ALRM_DISABLED;
+	alarms.powerAlarmMethod = ALRM_SOUND;
+	alarms.powerAlarmState = ALRM_DISABLED;
+	alarms.silentInterval = 300; //seconds?
+	alarms.windAlarmMethod = ALRM_SOUND;
+	alarms.windAlarmState = ALRM_DISABLED;
+	environment.airPressureChangeRateAlarm = 0.0;
+	environment.airPressure = 1024.0;
+	environment.airTemp = 0.0;
+	environment.currentDirection = 0.0;
+	environment.currentSpeed = 0.0;
+	environment.depth.belowKeel = 0.0;
+	environment.depth.belowTransducer = 0.0;
+	environment.depth.belowSurface = 0.0;
+	environment.depth.transducerToKeel = 0.0;
+	environment.depth.surfaceToTransducer = 0.0;
+	environment.humidity = 0.0;
+	environment.salinity = 0.0;
+	environment.tide.heightHigh = 0.0;
+	environment.tide.heightNow = 0.0;
+	environment.tide.heightLow = 0.0;
+	environment.tide.timeLow =0;
+	environment.tide.timeHigh = 0;
+	environment.waterTemp=0;
+	environment.wind.directionApparent = 0.0;
+	environment.wind.directionChangeAlarm = 0.0;
+	environment.wind.directionTrue = 0.0;
+	environment.wind.speedAlarm = 0.0;
+	environment.wind.speedTrue = 0.0;
+	environment.wind.speedApparent = 0.0;
+
+}
+
+float SignalkModel::getNavigationCourseOverGroundMagnetic(){
+return navigation.courseOverGroundMagnetic;
+}
+float SignalkModel::getNavigationCourseOverGroundTrue(){
+return navigation.courseOverGroundTrue;
+}
+float SignalkModel::getNavigationCurrentRouteBearingActual(){
+return navigation.currentRoute.bearingActual;
+}
+float SignalkModel::getNavigationCurrentRouteBearingDirect(){
+return navigation.currentRoute.bearingDirect;
+}
+float SignalkModel::getNavigationCurrentRouteCourseRequired(){
+return navigation.currentRoute.courseRequired;
+}
+long SignalkModel::getNavigationCurrentRouteEta(){
+return navigation.currentRoute.eta;
+}
+String SignalkModel::getNavigationCurrentRouteRoute(){
+return navigation.currentRoute.route;
+}
+long SignalkModel::getNavigationCurrentRouteStartTime(){
+return navigation.currentRoute.startTime;
+}
+
+long SignalkModel::getNavigationCurrentRouteWaypointLastTime(){
+return navigation.currentRoute.waypoint.lastTime;
+}
+String SignalkModel::getNavigationCurrentRouteWaypointLast(){
+return navigation.currentRoute.waypoint.last;
+}
+long SignalkModel::getNavigationCurrentRouteWaypointNextEta(){
+return navigation.currentRoute.waypoint.nextEta;
+}
+String SignalkModel::getNavigationCurrentRouteWaypointNext(){
+return navigation.currentRoute.waypoint.next;
+}
+float SignalkModel::getNavigationCurrentRouteWaypointXte(){
+return navigation.currentRoute.waypoint.xte;
+}
+float SignalkModel::getNavigationMagneticVariation(){
+return navigation.magneticVariation;
+}
+long SignalkModel::getNavigationDestinationEta(){
+return navigation.destination.eta;
+}
+float SignalkModel::getNavigationDestinationLongitude(){
+return navigation.destination.longitude;
+}
+float SignalkModel::getNavigationDestinationLatitude(){
+return navigation.destination.latitude;
+}
+float SignalkModel::getNavigationDestinationAltitude(){
+return navigation.destination.altitude;
+}
+float SignalkModel::getNavigationDrift(){
+return navigation.drift;
+}
+
+float SignalkModel::getNavigationHeadingMagnetic(){
+return navigation.headingMagnetic;
+}
+float SignalkModel::getNavigationHeadingTrue(){
+return navigation.headingTrue;
+}
+float SignalkModel::getNavigationPositionLongitude(){
+return navigation.position.longitude;
+}
+float SignalkModel::getNavigationPositionLatitude(){
+return navigation.position.latitude;
+}
+float SignalkModel::getNavigationPositionAltitude(){
+return navigation.position.altitude;
+}
+float SignalkModel::getNavigationPitch(){
+return navigation.pitch;
+}
+float SignalkModel::getNavigationRateOfTurn(){
+return navigation.rateOfTurn;
+}
+float SignalkModel::getNavigationRoll(){
+return navigation.roll;
+}
+float SignalkModel::getNavigationSet(){
+return navigation.set;
+}
+float SignalkModel::getNavigationSpeedOverGround(){
+return navigation.speedOverGround;
+}
+float SignalkModel::getNavigationSpeedThroughWater(){
+return navigation.speedThroughWater;
+}
+NavigationStateType SignalkModel::getNavigationState(){
+return navigation.state;
+}
+float SignalkModel::getSteeringRudderAngle(){
+return steering.rudderAngle;
+}
+float SignalkModel::getSteeringRudderAngleTarget(){
+return steering.rudderAngleTarget;
+}
+AutopilotStateType SignalkModel::getSteeringAutopilotState(){
+return steering.autopilot.state;
+}
+AutopilotModeType SignalkModel::getSteeringAutopilotMode(){
+return steering.autopilot.mode;
+}
+float SignalkModel::getSteeringAutopilotTargetHeadingNorth(){
+return steering.autopilot.targetHeadingNorth;
+}
+float SignalkModel::getSteeringAutopilotTargetHeadingMagnetic(){
+return steering.autopilot.targetHeadingMagnetic;
+}
+float SignalkModel::getSteeringAutopilotAlarmHeadingXte(){
+return steering.autopilot.alarmHeadingXte;
+}
+AutopilotHeadingSourceType SignalkModel::getSteeringAutopilotHeadingSource(){
+return steering.autopilot.headingSource;
+}
+float SignalkModel::getSteeringAutopilotDeadZone(){
+return steering.autopilot.deadZone;
+}
+float SignalkModel::getSteeringAutopilotBacklash(){
+return steering.autopilot.backlash;
+}
+float SignalkModel::getSteeringAutopilotGain(){
+return steering.autopilot.gain;
+}
+float SignalkModel::getSteeringAutopilotMaxDriveAmps(){
+return steering.autopilot.maxDriveAmps;
+}
+float SignalkModel::getSteeringAutopilotMaxDriveRate(){
+return steering.autopilot.maxDriveRate;
+}
+float SignalkModel::getSteeringAutopilotPortLock(){
+return steering.autopilot.portLock;
+}
+float SignalkModel::getSteeringAutopilotStarboardLock(){
+return steering.autopilot.starboardLock;
+}
+AlarmMethodType SignalkModel::getAlarmsAnchorAlarmMethod(){
+return alarms.anchorAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsAnchorAlarmState(){
+return alarms.anchorAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsAutopilotAlarmMethod(){
+return alarms.autopilotAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsAutopilotAlarmState(){
+return alarms.autopilotAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsEngineAlarmMethod(){
+return alarms.engineAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsEngineAlarmState(){
+return alarms.engineAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsFireAlarmMethod(){
+return alarms.fireAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsFireAlarmState(){
+return alarms.fireAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsGasAlarmMethod(){
+return alarms.gasAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsGasAlarmState(){
+return alarms.gasAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsGpsAlarmMethod(){
+return alarms.gpsAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsGpsAlarmState(){
+return alarms.gpsAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsMaydayAlarmMethod(){
+return alarms.maydayAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsMaydayAlarmState(){
+return alarms.maydayAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsPanpanAlarmMethod(){
+return alarms.panpanAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsPanpanAlarmState(){
+return alarms.panpanAlarmState;
+}
+AlarmMethodType SignalkModel::getAlarmsPowerAlarmMethod(){
+return alarms.powerAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsPowerAlarmState(){
+return alarms.powerAlarmState;
+}
+int SignalkModel::getAlarmsSilentInterval(){
+return alarms.silentInterval;
+}
+AlarmMethodType SignalkModel::getAlarmsWindAlarmMethod(){
+return alarms.windAlarmMethod;
+}
+AlarmStateType SignalkModel::getAlarmsWindAlarmState(){
+return alarms.windAlarmState;
+}
+float SignalkModel::getEnvironmentAirPressureChangeRateAlarm(){
+return environment.airPressureChangeRateAlarm;
+}
+float SignalkModel::getEnvironmentAirPressure(){
+return environment.airPressure;
+}
+float SignalkModel::getEnvironmentAirTemp(){
+return environment.airTemp;
+}
+float SignalkModel::getEnvironmentCurrentDirection(){
+return environment.currentDirection;
+}
+float SignalkModel::getEnvironmentCurrentSpeed(){
+return environment.currentDirection;
+}
+float SignalkModel::getEnvironmentDepthBelowKeel(){
+return environment.depth.belowKeel;
+}
+float SignalkModel::getEnvironmentDepthBelowTransducer(){
+return environment.depth.belowTransducer;
+}
+float SignalkModel::getEnvironmentDepthBelowSurface(){
+return environment.depth.belowSurface;
+}
+float SignalkModel::getEnvironmentDepthTransducerToKeel(){
+return environment.depth.transducerToKeel;
+}
+float SignalkModel::getEnvironmentDepthSurfaceToTransducer(){
+return environment.depth.surfaceToTransducer;
+}
+float SignalkModel::getEnvironmentHumidity(){
+return environment.humidity;
+}
+float SignalkModel::getEnvironmentSalinity(){
+return environment.salinity;
+}
+float SignalkModel::getEnvironmentTideHeightHigh(){
+return environment.tide.heightHigh;
+}
+float SignalkModel::getEnvironmentTideHeightNow(){
+return environment.tide.heightNow;
+}
+float SignalkModel::getEnvironmentTideHeightLow(){
+return environment.tide.heightLow;
+}
+long SignalkModel::getEnvironmentTideTimeLow(){
+return environment.tide.timeLow;
+}
+long SignalkModel::getEnvironmentTideTimeHigh(){
+return environment.tide.timeHigh;
+}
+float SignalkModel::getEnvironmentWaterTemp(){
+return environment.waterTemp;
+}
+float SignalkModel::getEnvironmentWindDirectionApparent(){
+return environment.wind.directionApparent;
+}
+float SignalkModel::getEnvironmentWindDirectionChangeAlarm(){
+return environment.wind.directionChangeAlarm;
+}
+float SignalkModel::getEnvironmentWindDirectionTrue(){
+return environment.wind.directionTrue;
+}
+float SignalkModel::getEnvironmentWindSpeedAlarm(){
+return environment.wind.speedAlarm;
+}
+float SignalkModel::getEnvironmentWindSpeedTrue(){
+return environment.wind.speedTrue;
+}
+float SignalkModel::getEnvironmentWindSpeedApparent(){
+	return environment.wind.speedApparent;
+}
+
+
+
+void SignalkModel::setNavigationCourseOverGroundMagnetic(float NavigationCourseOverGroundMagnetic){
+	navigation.courseOverGroundMagnetic=NavigationCourseOverGroundMagnetic;
+}
+
+void SignalkModel::setNavigationCourseOverGroundTrue(float NavigationCourseOverGroundTrue){
+	navigation.courseOverGroundTrue=NavigationCourseOverGroundTrue;
+}
+
+void SignalkModel::setNavigationCurrentRouteBearingActual(float NavigationCurrentRouteBearingActual){
+	navigation.currentRoute.bearingActual=NavigationCurrentRouteBearingActual;
+}
+
+void SignalkModel::setNavigationCurrentRouteBearingDirect(float NavigationCurrentRouteBearingDirect){
+	navigation.currentRoute.bearingDirect=NavigationCurrentRouteBearingDirect;
+}
+
+void SignalkModel::setNavigationCurrentRouteCourseRequired(float NavigationCurrentRouteCourseRequired){
+	navigation.currentRoute.courseRequired=NavigationCurrentRouteCourseRequired;
+}
+
+void SignalkModel::setNavigationCurrentRouteEta(long NavigationCurrentRouteEta){
+	navigation.currentRoute.eta=NavigationCurrentRouteEta;
+}
+
+void SignalkModel::setNavigationCurrentRouteRoute(String NavigationCurrentRouteRoute){
+	navigation.currentRoute.route=NavigationCurrentRouteRoute;
+}
+
+void SignalkModel::setNavigationCurrentRouteStartTime(long NavigationCurrentRouteStartTime){
+	navigation.currentRoute.startTime=NavigationCurrentRouteStartTime;
+}
+
+
+void SignalkModel::setNavigationCurrentRouteWaypointLastTime(long NavigationCurrentRouteWaypointLastTime){
+	navigation.currentRoute.waypoint.lastTime=NavigationCurrentRouteWaypointLastTime;
+}
+
+void SignalkModel::setNavigationCurrentRouteWaypointLast(String NavigationCurrentRouteWaypointLast){
+	navigation.currentRoute.waypoint.last=NavigationCurrentRouteWaypointLast;
+}
+
+void SignalkModel::setNavigationCurrentRouteWaypointNextEta(long NavigationCurrentRouteWaypointNextEta){
+	navigation.currentRoute.waypoint.nextEta=NavigationCurrentRouteWaypointNextEta;
+}
+
+void SignalkModel::setNavigationCurrentRouteWaypointNext(String NavigationCurrentRouteWaypointNext){
+	navigation.currentRoute.waypoint.next=NavigationCurrentRouteWaypointNext;
+}
+
+void SignalkModel::setNavigationCurrentRouteWaypointXte(float NavigationCurrentRouteWaypointXte){
+	navigation.currentRoute.waypoint.xte=NavigationCurrentRouteWaypointXte;
+}
+
+void SignalkModel::setNavigationMagneticVariation(float NavigationMagneticVariation){
+	navigation.magneticVariation=NavigationMagneticVariation;
+}
+
+void SignalkModel::setNavigationDestinationEta(long NavigationDestinationEta){
+	navigation.destination.eta=NavigationDestinationEta;
+}
+
+void SignalkModel::setNavigationDestinationLongitude(float NavigationDestinationLongitude){
+	navigation.destination.longitude=NavigationDestinationLongitude;
+}
+
+void SignalkModel::setNavigationDestinationLatitude(float NavigationDestinationLatitude){
+	navigation.destination.latitude=NavigationDestinationLatitude;
+}
+
+void SignalkModel::setNavigationDestinationAltitude(float NavigationDestinationAltitude){
+	navigation.destination.altitude=NavigationDestinationAltitude;
+}
+
+void SignalkModel::setNavigationDrift(float NavigationDrift){
+	navigation.drift=NavigationDrift;
+}
+
+
+void SignalkModel::setNavigationHeadingMagnetic(float NavigationHeadingMagnetic){
+	navigation.headingMagnetic=NavigationHeadingMagnetic;
+}
+
+void SignalkModel::setNavigationHeadingTrue(float NavigationHeadingTrue){
+	navigation.headingTrue=NavigationHeadingTrue;
+}
+
+void SignalkModel::setNavigationPositionLongitude(float NavigationPositionLongitude){
+	navigation.position.longitude=NavigationPositionLongitude;
+}
+
+void SignalkModel::setNavigationPositionLatitude(float NavigationPositionLatitude){
+	navigation.position.latitude=NavigationPositionLatitude;
+}
+
+void SignalkModel::setNavigationPositionAltitude(float NavigationPositionAltitude){
+	navigation.position.altitude=NavigationPositionAltitude;
+}
+
+void SignalkModel::setNavigationPitch(float NavigationPitch){
+	navigation.pitch=NavigationPitch;
+}
+
+void SignalkModel::setNavigationRateOfTurn(float NavigationRateOfTurn){
+	navigation.rateOfTurn=NavigationRateOfTurn;
+}
+
+void SignalkModel::setNavigationRoll(float NavigationRoll){
+	navigation.roll=NavigationRoll;
+}
+
+void SignalkModel::setNavigationSet(float NavigationSet){
+	navigation.set=NavigationSet;
+}
+
+void SignalkModel::setNavigationSpeedOverGround(float NavigationSpeedOverGround){
+	navigation.speedOverGround=NavigationSpeedOverGround;
+}
+
+void SignalkModel::setNavigationSpeedThroughWater(float NavigationSpeedThroughWater){
+	navigation.speedThroughWater=NavigationSpeedThroughWater;
+}
+
+void SignalkModel::setNavigationState(NavigationStateType NavigationState){
+	navigation.state=NavigationState;
+}
+
+void SignalkModel::setSteeringRudderAngle(float SteeringRudderAngle){
+	steering.rudderAngle=SteeringRudderAngle;
+}
+
+void SignalkModel::setSteeringRudderAngleTarget(float SteeringRudderAngleTarget){
+	steering.rudderAngleTarget=SteeringRudderAngleTarget;
+}
+
+void SignalkModel::setSteeringAutopilotState(AutopilotStateType SteeringAutopilotState){
+	steering.autopilot.state=SteeringAutopilotState;
+}
+
+void SignalkModel::setSteeringAutopilotMode(AutopilotModeType SteeringAutopilotMode){
+	steering.autopilot.mode=SteeringAutopilotMode;
+}
+
+void SignalkModel::setSteeringAutopilotTargetHeadingNorth(float SteeringAutopilotTargetHeadingNorth){
+	steering.autopilot.targetHeadingNorth=SteeringAutopilotTargetHeadingNorth;
+}
+
+void SignalkModel::setSteeringAutopilotTargetHeadingMagnetic(float SteeringAutopilotTargetHeadingMagnetic){
+	steering.autopilot.targetHeadingMagnetic=SteeringAutopilotTargetHeadingMagnetic;
+}
+
+void SignalkModel::setSteeringAutopilotAlarmHeadingXte(float SteeringAutopilotAlarmHeadingXte){
+	steering.autopilot.alarmHeadingXte=SteeringAutopilotAlarmHeadingXte;
+}
+
+void SignalkModel::setSteeringAutopilotHeadingSource(AutopilotHeadingSourceType SteeringAutopilotHeadingSource){
+	steering.autopilot.headingSource=SteeringAutopilotHeadingSource;
+}
+
+void SignalkModel::setSteeringAutopilotDeadZone(float SteeringAutopilotDeadZone){
+	steering.autopilot.deadZone=SteeringAutopilotDeadZone;
+}
+
+void SignalkModel::setSteeringAutopilotBacklash(float SteeringAutopilotBacklash){
+	steering.autopilot.backlash=SteeringAutopilotBacklash;
+}
+
+void SignalkModel::setSteeringAutopilotGain(float SteeringAutopilotGain){
+	steering.autopilot.gain=SteeringAutopilotGain;
+}
+
+void SignalkModel::setSteeringAutopilotMaxDriveAmps(float SteeringAutopilotMaxDriveAmps){
+	steering.autopilot.maxDriveAmps=SteeringAutopilotMaxDriveAmps;
+}
+
+void SignalkModel::setSteeringAutopilotMaxDriveRate(float SteeringAutopilotMaxDriveRate){
+	steering.autopilot.maxDriveRate=SteeringAutopilotMaxDriveRate;
+}
+
+void SignalkModel::setSteeringAutopilotPortLock(float SteeringAutopilotPortLock){
+	steering.autopilot.portLock=SteeringAutopilotPortLock;
+}
+
+void SignalkModel::setSteeringAutopilotStarboardLock(float SteeringAutopilotStarboardLock){
+	steering.autopilot.starboardLock=SteeringAutopilotStarboardLock;
+}
+
+
+void SignalkModel::setAlarmsAnchorAlarmMethod(AlarmMethodType AlarmsAnchorAlarmMethod){
+	alarms.anchorAlarmMethod=AlarmsAnchorAlarmMethod;
+}
+
+void SignalkModel::setAlarmsAnchorAlarmState(AlarmStateType AlarmsAnchorAlarmState){
+	alarms.anchorAlarmState=AlarmsAnchorAlarmState;
+}
+
+void SignalkModel::setAlarmsAutopilotAlarmMethod(AlarmMethodType AlarmsAutopilotAlarmMethod){
+	alarms.autopilotAlarmMethod=AlarmsAutopilotAlarmMethod;
+}
+
+void SignalkModel::setAlarmsAutopilotAlarmState(AlarmStateType AlarmsAutopilotAlarmState){
+	alarms.autopilotAlarmState=AlarmsAutopilotAlarmState;
+}
+
+void SignalkModel::setAlarmsEngineAlarmMethod(AlarmMethodType AlarmsEngineAlarmMethod){
+	alarms.engineAlarmMethod=AlarmsEngineAlarmMethod;
+}
+
+void SignalkModel::setAlarmsEngineAlarmState(AlarmStateType AlarmsEngineAlarmState){
+	alarms.engineAlarmState=AlarmsEngineAlarmState;
+}
+
+void SignalkModel::setAlarmsFireAlarmMethod(AlarmMethodType AlarmsFireAlarmMethod){
+	alarms.fireAlarmMethod=AlarmsFireAlarmMethod;
+}
+
+void SignalkModel::setAlarmsFireAlarmState(AlarmStateType AlarmsFireAlarmState){
+	alarms.fireAlarmState=AlarmsFireAlarmState;
+}
+
+void SignalkModel::setAlarmsGasAlarmMethod(AlarmMethodType AlarmsGasAlarmMethod){
+	alarms.gasAlarmMethod=AlarmsGasAlarmMethod;
+}
+
+void SignalkModel::setAlarmsGasAlarmState(AlarmStateType AlarmsGasAlarmState){
+	alarms.gasAlarmState=AlarmsGasAlarmState;
+}
+
+void SignalkModel::setAlarmsGpsAlarmMethod(AlarmMethodType AlarmsGpsAlarmMethod){
+	alarms.gpsAlarmMethod=AlarmsGpsAlarmMethod;
+}
+
+void SignalkModel::setAlarmsGpsAlarmState(AlarmStateType AlarmsGpsAlarmState){
+	alarms.gpsAlarmState=AlarmsGpsAlarmState;
+}
+
+void SignalkModel::setAlarmsMaydayAlarmMethod(AlarmMethodType AlarmsMaydayAlarmMethod){
+	alarms.maydayAlarmMethod=AlarmsMaydayAlarmMethod;
+}
+
+void SignalkModel::setAlarmsMaydayAlarmState(AlarmStateType AlarmsMaydayAlarmState){
+	alarms.maydayAlarmState=AlarmsMaydayAlarmState;
+}
+
+void SignalkModel::setAlarmsPanpanAlarmMethod(AlarmMethodType AlarmsPanpanAlarmMethod){
+	alarms.panpanAlarmMethod=AlarmsPanpanAlarmMethod;
+}
+
+void SignalkModel::setAlarmsPanpanAlarmState(AlarmStateType AlarmsPanpanAlarmState){
+	alarms.panpanAlarmState=AlarmsPanpanAlarmState;
+}
+
+void SignalkModel::setAlarmsPowerAlarmMethod(AlarmMethodType AlarmsPowerAlarmMethod){
+	alarms.powerAlarmMethod=AlarmsPowerAlarmMethod;
+}
+
+void SignalkModel::setAlarmsPowerAlarmState(AlarmStateType AlarmsPowerAlarmState){
+	alarms.powerAlarmState=AlarmsPowerAlarmState;
+}
+
+void SignalkModel::setAlarmsSilentInterval(int AlarmsSilentInterval){
+	alarms.silentInterval=AlarmsSilentInterval;
+}
+
+void SignalkModel::setAlarmsWindAlarmMethod(AlarmMethodType AlarmsWindAlarmMethod){
+	alarms.windAlarmMethod=AlarmsWindAlarmMethod;
+}
+
+void SignalkModel::setAlarmsWindAlarmState(AlarmStateType AlarmsWindAlarmState){
+	alarms.windAlarmState=AlarmsWindAlarmState;
+}
+
+
+void SignalkModel::setEnvironmentAirPressureChangeRateAlarm(float EnvironmentAirPressureChangeRateAlarm){
+	environment.airPressureChangeRateAlarm=EnvironmentAirPressureChangeRateAlarm;
+}
+
+void SignalkModel::setEnvironmentAirPressure(float EnvironmentAirPressure){
+	environment.airPressure=EnvironmentAirPressure;
+}
+
+void SignalkModel::setEnvironmentAirTemp(float EnvironmentAirTemp){
+	environment.airTemp=EnvironmentAirTemp;
+}
+
+void SignalkModel::setEnvironmentCurrentDirection(float EnvironmentCurrentDirection){
+	environment.currentDirection=EnvironmentCurrentDirection;
+}
+
+void SignalkModel::setEnvironmentCurrentSpeed(float EnvironmentCurrentSpeed){
+	environment.currentDirection=EnvironmentCurrentSpeed;
+}
+
+void SignalkModel::setEnvironmentDepthBelowKeel(float EnvironmentDepthBelowKeel){
+	environment.depth.belowKeel=EnvironmentDepthBelowKeel;
+}
+
+void SignalkModel::setEnvironmentDepthBelowTransducer(float EnvironmentDepthBelowTransducer){
+	environment.depth.belowTransducer=EnvironmentDepthBelowTransducer;
+}
+
+void SignalkModel::setEnvironmentDepthBelowSurface(float EnvironmentDepthBelowSurface){
+	environment.depth.belowSurface=EnvironmentDepthBelowSurface;
+}
+
+void SignalkModel::setEnvironmentDepthTransducerToKeel(float EnvironmentDepthTransducerToKeel){
+	environment.depth.transducerToKeel=EnvironmentDepthTransducerToKeel;
+}
+
+void SignalkModel::setEnvironmentDepthSurfaceToTransducer(float EnvironmentDepthSurfaceToTransducer){
+	environment.depth.surfaceToTransducer=EnvironmentDepthSurfaceToTransducer;
+}
+
+void SignalkModel::setEnvironmentHumidity(float EnvironmentHumidity){
+	environment.humidity=EnvironmentHumidity;
+}
+
+void SignalkModel::setEnvironmentSalinity(float EnvironmentSalinity){
+	environment.salinity=EnvironmentSalinity;
+}
+
+void SignalkModel::setEnvironmentTideHeightHigh(float EnvironmentTideHeightHigh){
+	environment.tide.heightHigh=EnvironmentTideHeightHigh;
+}
+
+void SignalkModel::setEnvironmentTideHeightNow(float EnvironmentTideHeightNow){
+	environment.tide.heightNow=EnvironmentTideHeightNow;
+}
+
+void SignalkModel::setEnvironmentTideHeightLow(float EnvironmentTideHeightLow){
+	environment.tide.heightLow=EnvironmentTideHeightLow;
+}
+
+void SignalkModel::setEnvironmentTideTimeLow(long EnvironmentTideTimeLow){
+	environment.tide.timeLow=EnvironmentTideTimeLow;
+}
+
+void SignalkModel::setEnvironmentTideTimeHigh(long EnvironmentTideTimeHigh){
+	environment.tide.timeHigh=EnvironmentTideTimeHigh;
+}
+
+void SignalkModel::setEnvironmentWaterTemp(float EnvironmentWaterTemp){
+	environment.waterTemp=EnvironmentWaterTemp;
+}
+
+void SignalkModel::setEnvironmentWindDirectionApparent(float EnvironmentWindDirectionApparent){
+	environment.wind.directionApparent=EnvironmentWindDirectionApparent;
+}
+
+void SignalkModel::setEnvironmentWindDirectionChangeAlarm(float EnvironmentWindDirectionChangeAlarm){
+	environment.wind.directionChangeAlarm=EnvironmentWindDirectionChangeAlarm;
+}
+
+void SignalkModel::setEnvironmentWindDirectionTrue(float EnvironmentWindDirectionTrue){
+	environment.wind.directionTrue=EnvironmentWindDirectionTrue;
+}
+
+void SignalkModel::setEnvironmentWindSpeedAlarm(float EnvironmentWindSpeedAlarm){
+	environment.wind.speedAlarm=EnvironmentWindSpeedAlarm;
+}
+
+void SignalkModel::setEnvironmentWindSpeedTrue(float EnvironmentWindSpeedTrue){
+	environment.wind.speedTrue=EnvironmentWindSpeedTrue;
+}
+
+void SignalkModel::setEnvironmentWindSpeedApparent(float environmentWindSpeedApparent){
+	 environment.wind.speedApparent=environmentWindSpeedApparent;
+}

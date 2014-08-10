@@ -1,0 +1,171 @@
+/*
+ * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
+ *
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * SignalkModel.h
+ *
+ *Holds all the global model vars
+ *
+ *  Created on: Mar 28, 2012
+ *      Author: robert
+ */
+
+#ifndef SIGNALKMODEL_H_
+#define SIGNALKMODEL_H_
+
+#include "Arduino.h"
+#include "FreeboardConstants.h"
+
+
+
+class SignalkModel {
+public:
+
+	SignalkModel();
+
+
+private:
+
+struct Navigation {
+	courseOverGroundMagnetic
+	courseOverGroundTrue
+	struct CurrentRoute {
+		bearingActual
+		bearingDirect
+		courseRequired
+		eta
+		route
+		startTime
+		struct Waypoint {
+			lastTime
+			last
+			nextEta
+			next
+			xte
+		} waypoint;
+	} currentRoute ;
+	magneticVariation
+	destination.eta
+	destination.longitude
+	destination.latitude
+	destination.altitude
+	drift
+	gnss
+	headingMagnetic
+	headingTrue
+	position.longitude
+	position.latitude
+	position.altitude
+	pitch
+	rateOfTurn
+	roll
+	set
+	speedOverGround
+	speedThroughWater
+	state.value
+} navigation;
+steering.rudderAngle
+steering.rudderAngleTarget
+steering.autopilot.state
+steering.autopilot.mode
+steering.autopilot.targetHeadingNorth
+steering.autopilot.targetHeadingMagnetic
+steering.autopilot.alarmHeadingXte
+steering.autopilot.headingSource
+steering.autopilot.deadZone
+steering.autopilot.backlash
+steering.autopilot.gain
+steering.autopilot.maxDriveAmps
+steering.autopilot.maxDriveRate
+steering.autopilot.portLock
+steering.autopilot.starboardLock
+alarms.anchorAlarmMethod
+alarms.anchorAlarmState
+alarms.autopilotAlarmMethod
+alarms.autopilotAlarmState
+alarms.engineAlarmMethod
+alarms.engineAlarmState
+alarms.fireAlarmMethod
+alarms.fireAlarmState
+alarms.gasAlarmMethod
+alarms.gasAlarmState
+alarms.gpsAlarmMethod
+alarms.gpsAlarmState
+alarms.maydayAlarmMethod
+alarms.maydayAlarmState
+alarms.panpanAlarmMethod
+alarms.panpanAlarmState
+alarms.powerAlarmMethod
+alarms.powerAlarmState
+alarms.silentInterval
+alarms.windAlarmMethod
+alarms.windAlarmState
+environment.airPressureChangeRateAlarm
+environment.airPressure
+environment.airTemp
+environment.currentDirection
+environment.currentSpeed
+environment.depth.belowKeel
+environment.depth.belowTransducer
+environment.depth.belowSurface
+environment.depth.transducerToKeel
+environment.depth.surfaceToTransducer
+environment.humidity
+environment.salinity
+environment.tide.heightHigh
+environment.tide.heightNow
+environment.tide.heightLow
+environment.tide.timeLow
+environment.tide.timeHigh
+environment.waterTemp
+environment.wind.directionApparent
+environment.wind.directionChangeAlarm
+environment.wind.directionTrue
+environment.wind.speedAlarm
+environment.wind.speedTrue
+environment.wind.speedApparent
+
+_arduino.gps.model
+_arduino.serial.baud0
+_arduino.serial.baud1
+_arduino.serial.baud2
+_arduino.serial.baud3
+_arduino.alarm.level1.upper
+_arduino.alarm.level1.lower
+_arduino.alarm.level2.upper
+_arduino.alarm.level2.lower
+_arduino.alarm.level3.upper
+_arduino.alarm.level3.lower
+_arduino.seatalk
+
+_arduino.windLastUpdate //32 bits (4 bytes). non neg
+_arduino.windAverage //16 bits (2 bytes)
+_arduino.windFactor		//32 bits (4 bytes). 
+_arduino.windMax
+_arduino.alarm.last //toggle to make alarm beep - beep beep
+_arduino.alarm.snooze
+	
+_arduino.anchorRadiusDeg //anchor alarm radius in decimal degrees, eg 1deg = 60NM.
+_arduino.anchorDistance
+_arduino.anchorMaxDistance
+//a box around the anchor, shrinks with every GPS reading to home in on the anchor itself
+_arduino.anchorN
+_arduino.anchorS
+_arduino.anchorE
+_arduino.anchorW
+

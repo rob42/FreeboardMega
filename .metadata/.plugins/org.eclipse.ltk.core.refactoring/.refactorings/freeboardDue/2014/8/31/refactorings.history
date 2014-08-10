@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;freeboardDue/SignalkModel.cpp&apos; to &apos;SignalkModel.h&apos;" description="Rename resource &apos;SignalkModel.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="SignalkModel.cpp" name="SignalkModel.h" stamp="1406963400289" updateReferences="true"/>
+</session>

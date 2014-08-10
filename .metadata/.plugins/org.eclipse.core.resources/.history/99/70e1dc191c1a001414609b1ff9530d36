@@ -1,0 +1,191 @@
+/*
+ * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
+ *
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * SignalkModel.h
+ *
+ *Holds all the global model vars
+ *
+ *  Created on: Mar 28, 2012
+ *      Author: robert
+ */
+
+#ifndef SIGNALKMODEL_H_
+#define SIGNALKMODEL_H_
+
+#include "Arduino.h"
+#include "FreeboardConstants.h"
+
+typedef enum {MESSAGE,SOUND,SMS,EMAIL,DSC} AlarmMethodType;
+typedef enum {DISABLED,ENABLED,FIRING,SILENT} AlarmStateType;
+
+class SignalkModel {
+public:
+
+	SignalkModel();
+
+
+private:
+
+struct Navigation {
+	float courseOverGroundMagnetic;
+	float courseOverGroundTrue;
+	struct CurrentRoute {
+		float bearingActual;
+		float bearingDirect;
+		float courseRequired;
+		long eta;
+		char route[10];
+		long startTime;
+		struct Waypoint {
+			long lastTime;
+			char last[10];
+			long nextEta;
+			char next[10];
+			float xte;
+		} waypoint;
+	} currentRoute ;
+   	float magneticVariation;
+	struct Destination {
+		long eta;
+		float longitude;
+		float latitude;
+		float altitude;
+	} destination;
+	float drift;
+	//gnss
+	float headingMagnetic;
+	float headingTrue;
+	struct Position {
+		float longitude;
+		float latitude;
+		float altitude;
+	} position ;
+	float pitch;
+	float rateOfTurn;
+	float roll;
+	float set;
+	float speedOverGround;
+	float speedThroughWater;
+	char state[];
+} navigation;
+struct Steering {
+	float rudderAngle;
+	float rudderAngleTarget;
+	struct Autopilot {
+		char state[];
+		char mode[];
+		float targetHeadingNorth;
+		float targetHeadingMagnetic;
+		float alarmHeadingXte;
+		char headingSource;
+		float deadZone;
+		float backlash;
+		int gain;
+		float maxDriveAmps;
+		float maxDriveRate;
+		float portLock;
+		float starboardLock;
+	} autopilot ;
+} steering ;
+struct Alarms {
+	int anchorAlarmMethod;
+	AlarmStateType anchorAlarmState;
+	AlarmMethodType autopilotAlarmMethod;
+	AlarmStateType autopilotAlarmState;
+	AlarmMethodType  engineAlarmMethod;
+	AlarmStateType engineAlarmState;
+	AlarmMethodType  fireAlarmMethod;
+	AlarmStateType fireAlarmState;
+	AlarmMethodType  gasAlarmMethod;
+	AlarmStateType gasAlarmState;
+	AlarmMethodType  gpsAlarmMethod;
+	AlarmStateType gpsAlarmState;
+	AlarmMethodType  maydayAlarmMethod;
+	AlarmStateType maydayAlarmState;
+	AlarmMethodType  panpanAlarmMethod;
+	AlarmStateType panpanAlarmState;
+	AlarmMethodType  powerAlarmMethod;
+	AlarmStateType powerAlarmState;
+	AlarmMethodType  silentInterval;
+	AlarmMethodType windAlarmMethod;
+	AlarmStateType windAlarmState;
+} alarms ;
+struct Environment {
+	float airPressureChangeRateAlarm;
+	float airPressure;
+	float airTemp;
+	float currentDirection;
+	float currentSpeed;
+	struct Depth {
+		float belowKeel;
+		float belowTransducer;
+		float belowSurface;
+		float transducerToKeel;
+		float surfaceToTransducer;
+	} depth;
+	float humidity;
+	float salinity;
+	struct Tide {
+		float heightHigh;
+		float heightNow;
+		float heightLow;
+		long timeLow;
+		long timeHigh;
+	} tide ;
+	float waterTemp;
+	struct Wind {
+		float directionApparent;
+		float directionChangeAlarm;
+		float directionTrue;
+		float speedAlarm;
+		float speedTrue;
+		float speedApparent;
+	} wind;
+}
+/*
+_arduino.gps.model
+_arduino.serial.baud0
+_arduino.serial.baud1
+_arduino.serial.baud2
+_arduino.serial.baud3
+_arduino.alarm.level1.upper
+_arduino.alarm.level1.lower
+_arduino.alarm.level2.upper
+_arduino.alarm.level2.lower
+_arduino.alarm.level3.upper
+_arduino.alarm.level3.lower
+_arduino.seatalk
+
+_arduino.windLastUpdate //32 bits (4 bytes). non neg
+_arduino.windAverage //16 bits (2 bytes)
+_arduino.windFactor		//32 bits (4 bytes). 
+_arduino.windMax
+_arduino.alarm.last //toggle to make alarm beep - beep beep
+_arduino.alarm.snooze
+	
+_arduino.anchorRadiusDeg //anchor alarm radius in decimal degrees, eg 1deg = 60NM.
+_arduino.anchorDistance
+_arduino.anchorMaxDistance
+//a box around the anchor, shrinks with every GPS reading to home in on the anchor itself
+_arduino.anchorN
+_arduino.anchorS
+_arduino.anchorE
+_arduino.anchorW
+
+*/

@@ -1,0 +1,390 @@
+/*
+ * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
+ *
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * SignalkModel.h
+ *
+ *Holds all the global model vars
+ *
+ *  Created on: Mar 28, 2012
+ *      Author: robert
+ */
+
+#ifndef SIGNALKMODEL_H_
+#define SIGNALKMODEL_H_
+
+#include "Arduino.h"
+#include "FreeboardConstants.h"
+
+typedef enum {ALRM_MESSAGE,ALRM_SOUND,ALRM_SMS,ALRM_EMAIL,ALRM_DSC} AlarmMethodType;
+typedef enum {ALRM_DISABLED,ALRM_ENABLED,ALRM_FIRING,ALRM_SILENT} AlarmStateType;
+
+typedef enum {AP_ON,AP_OFF,AP_ALARM} AutopilotStateType;
+typedef enum {AP_POWERSAVE,AP_NORMAL,AP_ACCURATE} AutopilotModeType;
+
+typedef enum {NAV_UNDERWAY_ENGINE,NAV_ANCHORED,NAV_NOT_UNDER_COMMAND, NAV_RESTRICTED_MANOUVERABILITY, NAV_CONSTRAINED_BY_DRAFT,
+	NAV_MOORED,NAV_AGROUND,NAV_FISHING,NAV_SAILING,NAV_NOT_DEFINED} NavigationStateType;
+
+typedef enum {AP_COMPASS,AP_WIND,AP_GPS} AutopilotHeadingSourceType;
+
+
+class SignalkModel {
+public:
+
+	SignalkModel();
+	float getNavigationCourseOverGroundMagnetic();
+	float getNavigationCourseOverGroundTrue();
+	float getNavigationCurrentRouteBearingActual();
+	float getNavigationCurrentRouteBearingDirect();
+	float getNavigationCurrentRouteCourseRequired();
+	long getNavigationCurrentRouteEta();
+	float getNavigationCurrentRouteRoute();
+	long getNavigationCurrentRouteStartTime();
+	float getNavigationCurrentRouteWaypoint();
+	long getNavigationCurrentRouteWaypointLastTime();
+	float getNavigationCurrentRouteWaypointLast();
+	long getNavigationCurrentRouteWaypointNextEta();
+	float getNavigationCurrentRouteWaypointNext();
+	float getNavigationCurrentRouteWaypointXte();
+	float getNavigationMagneticVariation();
+	long getNavigationDestinationEta();
+	float getNavigationDestinationLongitude();
+	float getNavigationDestinationLatitude();
+	float getNavigationDestinationAltitude();
+	float getNavigationDrift();
+
+	float getNavigationHeadingMagnetic();
+	float getNavigationHeadingTrue();
+	float getNavigationPositionLongitude();
+	float getNavigationPositionLatitude();
+	float getNavigationPositionAltitude();
+	float getNavigationPitch();
+	float getNavigationRateOfTurn();
+	float getNavigationRoll();
+	float getNavigationSet();
+	float getNavigationSpeedOverGround();
+	float getNavigationSpeedThroughWater();
+	NavigationStateType getNavigationState();
+	float getSteeringRudderAngle();
+	float getSteeringRudderAngleTarget();
+	AutopilotStateType getSteeringAutopilotState();
+	AutopilotModeType getSteeringAutopilotMode();
+	float getSteeringAutopilotTargetHeadingNorth();
+	float getSteeringAutopilotTargetHeadingMagnetic();
+	float getSteeringAutopilotAlarmHeadingXte();
+	AutopilotHeadingSourceType getSteeringAutopilotHeadingSource();
+	float getSteeringAutopilotDeadZone();
+	float getSteeringAutopilotBacklash();
+	float getSteeringAutopilotGain();
+	float getSteeringAutopilotMaxDriveAmps();
+	float getSteeringAutopilotMaxDriveRate();
+	float getSteeringAutopilotPortLock();
+	float getSteeringAutopilotStarboardLock();
+	AlarmMethodType getAlarmsAnchorAlarmMethod();
+	AlarmStateType getAlarmsAnchorAlarmState();
+	AlarmMethodType getAlarmsAutopilotAlarmMethod();
+	AlarmStateType getAlarmsAutopilotAlarmState();
+	AlarmMethodType getAlarmsEngineAlarmMethod();
+	AlarmStateType getAlarmsEngineAlarmState();
+	AlarmMethodType getAlarmsFireAlarmMethod();
+	AlarmStateType getAlarmsFireAlarmState();
+	AlarmMethodType getAlarmsGasAlarmMethod();
+	AlarmStateType getAlarmsGasAlarmState();
+	AlarmMethodType getAlarmsGpsAlarmMethod();
+	AlarmStateType getAlarmsGpsAlarmState();
+	AlarmMethodType getAlarmsMaydayAlarmMethod();
+	AlarmStateType getAlarmsMaydayAlarmState();
+	AlarmMethodType getAlarmsPanpanAlarmMethod();
+	AlarmStateType getAlarmsPanpanAlarmState();
+	AlarmMethodType getAlarmsPowerAlarmMethod();
+	AlarmStateType getAlarmsPowerAlarmState();
+	int getAlarmsSilentInterval();
+	AlarmMethodType getAlarmsWindAlarmMethod();
+	AlarmStateType getAlarmsWindAlarmState();
+	float getEnvironmentAirPressureChangeRateAlarm();
+	float getEnvironmentAirPressure();
+	float getEnvironmentAirTemp();
+	float getEnvironmentCurrentDirection();
+	float getEnvironmentCurrentSpeed();
+	float getEnvironmentDepthBelowKeel();
+	float getEnvironmentDepthBelowTransducer();
+	float getEnvironmentDepthBelowSurface();
+	float getEnvironmentDepthTransducerToKeel();
+	float getEnvironmentDepthSurfaceToTransducer();
+	float getEnvironmentHumidity();
+	float getEnvironmentSalinity();
+	float getEnvironmentTideHeightHigh();
+	float getEnvironmentTideHeightNow();
+	float getEnvironmentTideHeightLow();
+	long getEnvironmentTideTimeLow();
+	long getEnvironmentTideTimeHigh();
+	float getEnvironmentWaterTemp();
+	float getEnvironmentWindDirectionApparent();
+	float getEnvironmentWindDirectionChangeAlarm();
+	float getEnvironmentWindDirectionTrue();
+	float getEnvironmentWindSpeedAlarm();
+	float getEnvironmentWindSpeedTrue();
+	float getEnvironmentWindSpeedApparent();
+
+
+	void setNavigationCourseOverGroundMagnetic(float navigationCourseOverGroundMagnetic);
+	void setNavigationCourseOverGroundTrue(float navigationCourseOverGroundTrue);
+	void setNavigationCurrentRouteBearingActual(float navigationCurrentRouteBearingActual);
+	void setNavigationCurrentRouteBearingDirect(float navigationCurrentRouteBearingDirect);
+	void setNavigationCurrentRouteCourseRequired(float navigationCurrentRouteCourseRequired);
+	void setNavigationCurrentRouteEta(long navigationCurrentRouteEta);
+	void setNavigationCurrentRouteRoute(float navigationCurrentRouteRoute);
+	void setNavigationCurrentRouteStartTime(long navigationCurrentRouteStartTime);
+	void setNavigationCurrentRouteWaypoint(float navigationCurrentRouteWaypoint);
+	void setNavigationCurrentRouteWaypointLastTime(long navigationCurrentRouteWaypointLastTime);
+	void setNavigationCurrentRouteWaypointLast(float navigationCurrentRouteWaypointLast);
+	void setNavigationCurrentRouteWaypointNextEta(long navigationCurrentRouteWaypointNextEta);
+	void setNavigationCurrentRouteWaypointNext(float navigationCurrentRouteWaypointNext);
+	void setNavigationCurrentRouteWaypointXte(float navigationCurrentRouteWaypointXte);
+	void setNavigationMagneticVariation(float navigationMagneticVariation);
+	void setNavigationDestinationEta(long navigationDestinationEta);
+	void setNavigationDestinationLongitude(float navigationDestinationLongitude);
+	void setNavigationDestinationLatitude(float navigationDestinationLatitude);
+	void setNavigationDestinationAltitude(float navigationDestinationAltitude);
+	void setNavigationDrift(float navigationDrift);
+	void setNavigationGnss(float navigationGnss);
+	void setNavigationHeadingMagnetic(float navigationHeadingMagnetic);
+	void setNavigationHeadingTrue(float navigationHeadingTrue);
+	void setNavigationPositionLongitude(float navigationPositionLongitude);
+	void setNavigationPositionLatitude(float navigationPositionLatitude);
+	void setNavigationPositionAltitude(float navigationPositionAltitude);
+	void setNavigationPitch(float navigationPitch);
+	void setNavigationRateOfTurn(float navigationRateOfTurn);
+	void setNavigationRoll(float navigationRoll);
+	void setNavigationSet(float navigationSet);
+	void setNavigationSpeedOverGround(float navigationSpeedOverGround);
+	void setNavigationSpeedThroughWater(float navigationSpeedThroughWater);
+	void setNavigationState(NavigationStateType navigationStateValue);
+	void setSteeringRudderAngle(float steeringRudderAngle);
+	void setSteeringRudderAngleTarget(float steeringRudderAngleTarget);
+	void setSteeringAutopilotState(AutopilotStateType steeringAutopilotState);
+	void setSteeringAutopilotMode(AutopilotModeType steeringAutopilotMode);
+	void setSteeringAutopilotTargetHeadingNorth(float steeringAutopilotTargetHeadingNorth);
+	void setSteeringAutopilotTargetHeadingMagnetic(float steeringAutopilotTargetHeadingMagnetic);
+	void setSteeringAutopilotAlarmHeadingXte(float steeringAutopilotAlarmHeadingXte);
+	void setSteeringAutopilotHeadingSource(AutopilotHeadingSourceType steeringAutopilotHeadingSource);
+	void setSteeringAutopilotDeadZone(float steeringAutopilotDeadZone);
+	void setSteeringAutopilotBacklash(float steeringAutopilotBacklash);
+	void setSteeringAutopilotGain(float steeringAutopilotGain);
+	void setSteeringAutopilotMaxDriveAmps(float steeringAutopilotMaxDriveAmps);
+	void setSteeringAutopilotMaxDriveRate(float steeringAutopilotMaxDriveRate);
+	void setSteeringAutopilotPortLock(float steeringAutopilotPortLock);
+	void setSteeringAutopilotStarboardLock(float steeringAutopilotStarboardLock);
+	void setAlarmsAnchorAlarmMethod(AlarmMethodType alarmsAnchorAlarmMethod);
+	void setAlarmsAnchorAlarmState(AlarmStateType alarmsAnchorAlarmState);
+	void setAlarmsAutopilotAlarmMethod(AlarmMethodType alarmsAutopilotAlarmMethod);
+	void setAlarmsAutopilotAlarmState(AlarmStateType alarmsAutopilotAlarmState);
+	void setAlarmsEngineAlarmMethod(AlarmMethodType alarmsEngineAlarmMethod);
+	void setAlarmsEngineAlarmState(AlarmStateType alarmsEngineAlarmState);
+	void setAlarmsFireAlarmMethod(AlarmMethodType alarmsFireAlarmMethod);
+	void setAlarmsFireAlarmState(AlarmStateType alarmsFireAlarmState);
+	void setAlarmsGasAlarmMethod(AlarmMethodType alarmsGasAlarmMethod);
+	void setAlarmsGasAlarmState(AlarmStateType alarmsGasAlarmState);
+	void setAlarmsGpsAlarmMethod(AlarmMethodType alarmsGpsAlarmMethod);
+	void setAlarmsGpsAlarmState(AlarmStateType alarmsGpsAlarmState);
+	void setAlarmsMaydayAlarmMethod(AlarmMethodType alarmsMaydayAlarmMethod);
+	void setAlarmsMaydayAlarmState(AlarmStateType alarmsMaydayAlarmState);
+	void setAlarmsPanpanAlarmMethod(AlarmMethodType alarmsPanpanAlarmMethod);
+	void setAlarmsPanpanAlarmState(AlarmStateType alarmsPanpanAlarmState);
+	void setAlarmsPowerAlarmMethod(AlarmMethodType alarmsPowerAlarmMethod);
+	void setAlarmsPowerAlarmState(AlarmStateType alarmsPowerAlarmState);
+	void setAlarmsSilentInterval(int alarmsSilentInterval);
+	void setAlarmsWindAlarmMethod(AlarmMethodType alarmsWindAlarmMethod);
+	void setAlarmsWindAlarmState(AlarmStateType alarmsWindAlarmState);
+	void setEnvironmentAirPressureChangeRateAlarm(float environmentAirPressureChangeRateAlarm);
+	void setEnvironmentAirPressure(float environmentAirPressure);
+	void setEnvironmentAirTemp(float environmentAirTemp);
+	void setEnvironmentCurrentDirection(float environmentCurrentDirection);
+	void setEnvironmentCurrentSpeed(float environmentCurrentSpeed);
+	void setEnvironmentDepthBelowKeel(float environmentDepthBelowKeel);
+	void setEnvironmentDepthBelowTransducer(float environmentDepthBelowTransducer);
+	void setEnvironmentDepthBelowSurface(float environmentDepthBelowSurface);
+	void setEnvironmentDepthTransducerToKeel(float environmentDepthTransducerToKeel);
+	void setEnvironmentDepthSurfaceToTransducer(float environmentDepthSurfaceToTransducer);
+	void setEnvironmentHumidity(float environmentHumidity);
+	void setEnvironmentSalinity(float environmentSalinity);
+	void setEnvironmentTideHeightHigh(float environmentTideHeightHigh);
+	void setEnvironmentTideHeightNow(float environmentTideHeightNow);
+	void setEnvironmentTideHeightLow(float environmentTideHeightLow);
+	void setEnvironmentTideTimeLow(long environmentTideTimeLow);
+	void setEnvironmentTideTimeHigh(long environmentTideTimeHigh);
+	void setEnvironmentWaterTemp(float environmentWaterTemp);
+	void setEnvironmentWindDirectionApparent(float environmentWindDirectionApparent);
+	void setEnvironmentWindDirectionChangeAlarm(float environmentWindDirectionChangeAlarm);
+	void setEnvironmentWindDirectionTrue(float environmentWindDirectionTrue);
+	void setEnvironmentWindSpeedAlarm(float environmentWindSpeedAlarm);
+	void setEnvironmentWindSpeedTrue(float environmentWindSpeedTrue);
+	void setEnvironmentWindSpeedApparent(float environmentWindSpeedApparent);
+
+private:
+
+	struct Navigation {
+		float courseOverGroundMagnetic;
+		float courseOverGroundTrue;
+		struct CurrentRoute {
+			float bearingActual;
+			float bearingDirect;
+			float courseRequired;
+			long eta;
+			String route;
+			long startTime;
+			struct Waypoint {
+				long lastTime;
+				String last;
+				long nextEta;
+				String next;
+				float xte;
+			} waypoint;
+		} currentRoute ;
+		float magneticVariation;
+		struct Destination {
+			long eta;
+			float longitude;
+			float latitude;
+			float altitude;
+		} destination;
+		float drift;
+		//gnss
+		float headingMagnetic;
+		float headingTrue;
+		struct Position {
+			float longitude;
+			float latitude;
+			float altitude;
+		} position ;
+		float pitch;
+		float rateOfTurn;
+		float roll;
+		float set;
+		float speedOverGround;
+		float speedThroughWater;
+		NavigationStateType state;
+	} navigation;
+	struct Steering {
+		float rudderAngle;
+		float rudderAngleTarget;
+		struct Autopilot {
+			AutopilotStateType state;
+			AutopilotModeType mode;
+			float targetHeadingNorth;
+			float targetHeadingMagnetic;
+			float alarmHeadingXte;
+			AutopilotHeadingSourceType headingSource;
+			float deadZone;
+			float backlash;
+			int gain;
+			float maxDriveAmps;
+			float maxDriveRate;
+			float portLock;
+			float starboardLock;
+		} autopilot ;
+	} steering ;
+	struct Alarms {
+		AlarmMethodType anchorAlarmMethod;
+		AlarmStateType anchorAlarmState;
+		AlarmMethodType autopilotAlarmMethod;
+		AlarmStateType autopilotAlarmState;
+		AlarmMethodType  engineAlarmMethod;
+		AlarmStateType engineAlarmState;
+		AlarmMethodType  fireAlarmMethod;
+		AlarmStateType fireAlarmState;
+		AlarmMethodType  gasAlarmMethod;
+		AlarmStateType gasAlarmState;
+		AlarmMethodType  gpsAlarmMethod;
+		AlarmStateType gpsAlarmState;
+		AlarmMethodType  maydayAlarmMethod;
+		AlarmStateType maydayAlarmState;
+		AlarmMethodType  panpanAlarmMethod;
+		AlarmStateType panpanAlarmState;
+		AlarmMethodType  powerAlarmMethod;
+		AlarmStateType powerAlarmState;
+		int  silentInterval;
+		AlarmMethodType windAlarmMethod;
+		AlarmStateType windAlarmState;
+	} alarms ;
+	struct Environment {
+		float airPressureChangeRateAlarm;
+		float airPressure;
+		float airTemp;
+		float currentDirection;
+		float currentSpeed;
+		struct Depth {
+			float belowKeel;
+			float belowTransducer;
+			float belowSurface;
+			float transducerToKeel;
+			float surfaceToTransducer;
+		} depth;
+		float humidity;
+		float salinity;
+		struct Tide {
+			float heightHigh;
+			float heightNow;
+			float heightLow;
+			long timeLow;
+			long timeHigh;
+		} tide ;
+		float waterTemp;
+		struct Wind {
+			float directionApparent;
+			float directionChangeAlarm;
+			float directionTrue;
+			float speedAlarm;
+			float speedTrue;
+			float speedApparent;
+		} wind;
+	} environment ;
+};
+/*
+_arduino.gps.model
+_arduino.serial.baud0
+_arduino.serial.baud1
+_arduino.serial.baud2
+_arduino.serial.baud3
+_arduino.alarm.level1.upper
+_arduino.alarm.level1.lower
+_arduino.alarm.level2.upper
+_arduino.alarm.level2.lower
+_arduino.alarm.level3.upper
+_arduino.alarm.level3.lower
+_arduino.seatalk
+
+_arduino.windLastUpdate //32 bits (4 bytes). non neg
+_arduino.windAverage //16 bits (2 bytes)
+_arduino.windFactor		//32 bits (4 bytes). 
+_arduino.windMax
+_arduino.alarm.last //toggle to make alarm beep - beep beep
+_arduino.alarm.snooze
+	
+_arduino.anchorRadiusDeg //anchor alarm radius in decimal degrees, eg 1deg = 60NM.
+_arduino.anchorDistance
+_arduino.anchorMaxDistance
+//a box around the anchor, shrinks with every GPS reading to home in on the anchor itself
+_arduino.anchorN
+_arduino.anchorS
+_arduino.anchorE
+_arduino.anchorW
+
+*/
+
+#endif /* SIGNALKMODEL_H_ */

@@ -1,0 +1,46 @@
+22:35:02 **** Incremental Build of configuration Release for project freeboardDue ****
+make all 
+Building file: ../Seatalk.cpp
+Starting C++ compile
+"/home/robert/dev/arduino-1.5.2/hardware/tools/g++_arm_none_eabi/bin/arm-none-eabi-g++" -c -g -Os -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -Dprintf=iprintf -mcpu=cortex-m3 -DF_CPU=84000000L -DARDUINO=152 -D__SAM3X8E__ -mthumb -DUSB_PID=0x003e -DUSB_VID=0x2341 -DUSBCON "-I/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/system/libsam" "-I/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/system/CMSIS/CMSIS/Include/" "-I/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/system/CMSIS/Device/ATMEL/"   -I"/home/robert/dev/arduino-1.5.7/hardware/arduino/sam/cores/arduino" -I"/home/robert/dev/arduino-1.5.7/hardware/arduino/sam/variants/arduino_due_x" -I"/home/robert/gitrep/freeboardDue/lib/DueTimer" -I"/home/robert/gitrep/freeboardDue/lib/Kangaroo" -I"/home/robert/dev/arduino-1.5.7/hardware/arduino/sam/libraries/SPI" -I"/home/robert/gitrep/freeboardDue/lib/MultiSerial" -I"/home/robert/gitrep/freeboardDue/lib/JsonStream" -I"/home/robert/gitrep/freeboardDue/lib/NMEA" -I"/home/robert/gitrep/freeboardDue/lib/PString" -I"/home/robert/gitrep/freeboardDue/lib/AverageList" -I"/home/robert/gitrep/freeboardDue/lib/PID_v1" -MMD -MP -MF"Seatalk.cpp.d" -MT"Seatalk.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../Seatalk.cpp"  -o  "Seatalk.cpp.o"   -Wall
+Finished building: ../Seatalk.cpp
+ 
+Starting combiner
+"/home/robert/dev/arduino-1.5.2/hardware/tools/g++_arm_none_eabi/bin/arm-none-eabi-g++" -Os -Wl,--gc-sections -mcpu=cortex-m3 "-T/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/variants/arduino_due_x/linker_scripts/gcc/flash.ld" "-Wl,-Map,/home/robert/gitrep/freeboardDue/Release/freeboardDue.map" -o "/home/robert/gitrep/freeboardDue/Release/freeboardDue.elf" "-L/home/robert/gitrep/freeboardDue/Release" -lm -lgcc -mthumb -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--entry=Reset_Handler -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols -Wl,--start-group "/home/robert/gitrep/freeboardDue/Release/arduino/syscalls_sam3.c.o"    ./Alarm.cpp.o ./Anchor.cpp.o ./Autopilot.cpp.o ./FreeBoardModel.cpp.o ./Gps.cpp.o ./NmeaRelay.cpp.o ./NmeaSerial.cpp.o ./Seatalk.cpp.o ./Wind.cpp.o ./freeboardDue.cpp.o  ./lib/PString/PString.cpp.o  ./lib/PID_v1/PID_v1.cpp.o  ./lib/NMEA/nmea.cpp.o  ./lib/MultiSerial/MultiSerial.cpp.o  ./lib/Kangaroo/KangarooCRC.cpp.o ./lib/Kangaroo/KangarooChannel.cpp.o ./lib/Kangaroo/KangarooCommandWriter.cpp.o ./lib/Kangaroo/KangarooMonitor.cpp.o ./lib/Kangaroo/KangarooReplyReader.cpp.o ./lib/Kangaroo/KangarooReplyReceiver.cpp.o ./lib/Kangaroo/KangarooSerial.cpp.o ./lib/Kangaroo/KangarooStatus.cpp.o ./lib/Kangaroo/KangarooTimeout.cpp.o  ./lib/JsonStream/stream_json_reader.cpp.o  ./lib/DueTimer/DueTimer.cpp.o  ./Libraries/SPI/SPI.cpp.o  ./.metadata/.plugins/org.eclipse.cdt.managedbuilder.core/spec.C.o ./.metadata/.plugins/org.eclipse.cdt.managedbuilder.core/spec.c.o  ./.metadata/.plugins/org.eclipse.cdt.make.core/specs.c.o ./.metadata/.plugins/org.eclipse.cdt.make.core/specs.cpp.o   /home/robert/gitrep/freeboardDue/Release/arduino.ar   "/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/variants/arduino_due_x/libsam_sam3x8e_gcc_rel.a" "/home/robert/gitrep/freeboardDue/Release/arduino.ar" -Wl,--end-group
+Finished building: freeboardDue.elf
+ 
+Create eeprom image
+Finished building: freeboardDue.eep
+ 
+Create Flash image (ihex format)
+"/home/robert/dev/arduino-1.5.2/hardware/tools/g++_arm_none_eabi/bin/arm-none-eabi-objcopy" -O binary "/home/robert/gitrep/freeboardDue/Release/freeboardDue.elf" "/home/robert/gitrep/freeboardDue/Release/freeboardDue.bin"
+Finished building: freeboardDue.bin
+ 
+Building target: freeboardDue
+Printing size:
+"/home/robert/dev/arduino-1.5.2/hardware/tools/g++_arm_none_eabi/bin/arm-none-eabi-size" -A "/home/robert/gitrep/freeboardDue/Release/freeboardDue.elf"
+/home/robert/gitrep/freeboardDue/Release/freeboardDue.elf  :
+section             size        addr
+.text              72420      524288
+.ARM.exidx             8      596708
+.relocate           1464   537329664
+.bss                4228   537331128
+.ARM.attributes       37           0
+.comment            2149           0
+.debug_abbrev      32104           0
+.debug_info       226724           0
+.debug_line        49115           0
+.debug_loc         35379           0
+.debug_pubnames    19362           0
+.debug_aranges      6120           0
+.debug_ranges       8984           0
+.debug_str         43909           0
+.debug_frame       25320           0
+Total             527323
+
+
+Finished building target: freeboardDue
+ 
+
+22:35:04 Build Finished (took 1s.600ms)
+

@@ -1,0 +1,27 @@
+//The setup function is called once at startup of the sketch
+#define DEBUG true
+#include <DueTimer.h>
+
+
+void doEverySecond(){
+
+}
+
+void setup()
+{
+// Add your initialization code here
+	//	//setup timers
+		if (DEBUG) Serial.println("Start timer..");
+		Timer3.attachInterrupt(doEverySecond).start(1000);
+
+
+
+		if (DEBUG) Serial.println("Setup complete..");
+}
+
+// The loop function is called in an endless loop
+void loop()
+{
+//Add your repeated code here
+}
+

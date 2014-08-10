@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+pathvariable.ArduinoLibPath=/home/robert/dev/arduino-1.5.7/libraries
+pathvariable.ArduinoPath=/home/robert/dev/arduino-1.5.7
+pathvariable.ArduinoPivateLibPath=/home/robert/dev/arduino-1.5.7/libraries
+version=1

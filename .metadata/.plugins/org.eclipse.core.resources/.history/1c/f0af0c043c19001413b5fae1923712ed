@@ -1,0 +1,37 @@
+//The setup function is called once at startup of the sketch
+#define DEBUG true
+#include <DueTimer.h>
+
+int myLed = 13;
+bool ledOn = false;
+volatile bool execute = false;
+volatile int interval = 0;
+
+void doEverySecond(){
+	ledOn = !ledOn;
+	digitalWrite(myLed, ledOn); // Led on, off, on, off...
+}
+
+void doEvery100(){
+	execute=true;
+	interval++;
+}
+
+void setup()
+{
+// Add your initialization code here
+	//	//setup timers
+		if (DEBUG) Serial.println("Start timer..");
+		Timer3.attachInterrupt(doEverySecond).start(1000);
+
+
+
+		if (DEBUG) Serial.println("Setup complete..");
+}
+
+// The loop function is called in an endless loop
+void loop()
+{
+//Add your repeated code here
+}
+

@@ -1,0 +1,120 @@
+navigation.courseOverGroundMagnetic
+navigation.courseOverGroundTrue
+navigation.currentRoute.bearingActual
+navigation.currentRoute.bearingDirect
+navigation.currentRoute.courseRequired
+navigation.currentRoute.eta
+navigation.currentRoute.route
+navigation.currentRoute.startTime
+navigation.currentRoute.waypoint
+navigation.currentRoute.waypoint.lastTime
+navigation.currentRoute.waypoint.last
+navigation.currentRoute.waypoint.nextEta
+navigation.currentRoute.waypoint.next
+navigation.currentRoute.waypoint.xte
+navigation.magneticVariation
+navigation.destination.eta
+navigation.destination.longitude
+navigation.destination.latitude
+navigation.destination.altitude
+navigation.drift
+navigation.gnss
+navigation.headingMagnetic
+navigation.headingTrue
+navigation.position.longitude
+navigation.position.latitude
+navigation.position.altitude
+navigation.pitch
+navigation.rateOfTurn
+navigation.roll
+navigation.set
+navigation.speedOverGround
+navigation.speedThroughWater
+navigation.state.value
+steering.rudderAngle
+steering.rudderAngleTarget
+steering.autopilot.state
+steering.autopilot.mode
+steering.autopilot.targetHeadingNorth
+steering.autopilot.targetHeadingMagnetic
+steering.autopilot.alarmHeadingXte
+steering.autopilot.headingSource
+steering.autopilot.deadZone
+steering.autopilot.backlash
+steering.autopilot.gain
+steering.autopilot.maxDriveAmps
+steering.autopilot.maxDriveRate
+steering.autopilot.portLock
+steering.autopilot.starboardLock
+alarms.anchorAlarmMethod
+alarms.anchorAlarmState
+alarms.autopilotAlarmMethod
+alarms.autopilotAlarmState
+alarms.engineAlarmMethod
+alarms.engineAlarmState
+alarms.fireAlarmMethod
+alarms.fireAlarmState
+alarms.gasAlarmMethod
+alarms.gasAlarmState
+alarms.gpsAlarmMethod
+alarms.gpsAlarmState
+alarms.maydayAlarmMethod
+alarms.maydayAlarmState
+alarms.panpanAlarmMethod
+alarms.panpanAlarmState
+alarms.powerAlarmMethod
+alarms.powerAlarmState
+alarms.silentInterval
+alarms.windAlarmMethod
+alarms.windAlarmState
+environment.airPressureChangeRateAlarm
+environment.airPressure
+environment.airTemp
+environment.currentDirection
+environment.currentSpeed
+environment.depth.belowKeel
+environment.depth.belowTransducer
+environment.depth.belowSurface
+environment.depth.transducerToKeel
+environment.depth.surfaceToTransducer
+environment.humidity
+environment.salinity
+environment.tide.heightHigh
+environment.tide.heightNow
+environment.tide.heightLow
+environment.tide.timeLow
+environment.tide.timeHigh
+environment.waterTemp
+environment.wind.directionApparent
+environment.wind.directionChangeAlarm
+environment.wind.directionTrue
+environment.wind.speedAlarm
+environment.wind.speedTrue
+environment.wind.speedApparent
+
+_arduino.gps.model
+_arduino.serial.baud0
+_arduino.serial.baud1
+_arduino.serial.baud2
+_arduino.serial.baud3
+_arduino.alarm.level1.upper
+_arduino.alarm.level1.lower
+_arduino.alarm.level2.upper
+_arduino.alarm.level2.lower
+_arduino.alarm.level3.upper
+_arduino.alarm.level3.lower
+_arduino.seatalk
+#define GPS_MODEL "#GPS"
+#define SERIAL_BAUD0 "#SB0"
+#define SERIAL_BAUD1 "#SB1"
+#define SERIAL_BAUD2 "#SB2"
+#define SERIAL_BAUD3 "#SB3"
+#define SEATALK "#STK"
+
+#define LEVEL1_UPPER_ALARM "#LU1"
+#define LEVEL2_UPPER_ALARM "#LU2"
+#define LEVEL3_UPPER_ALARM "#LU3"
+#define LEVEL1_LOWER_ALARM "#LU1"
+#define LEVEL2_LOWER_ALARM "#LU2"
+#define LEVEL3_LOWER_ALARM "#LU3"
+

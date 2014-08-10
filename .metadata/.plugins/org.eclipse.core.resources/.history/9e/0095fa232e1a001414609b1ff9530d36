@@ -1,0 +1,398 @@
+/*
+ * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
+ *
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
+ *
+ *  FreeBoard is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+
+ *  FreeBoard is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+
+ *  You should have received a copy of the GNU General Public License
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/*
+ * SignalkModel.cpp
+ *
+ *  Created on: Aug 2, 2014
+ *      Author: robert
+ */
+
+#include "SignalkModel.h"
+
+SignalkModel::SignalkModel() {
+
+	navigation.courseOverGroundMagnetic = 0.0;
+	navigation.courseOverGroundTrue = 0.0;
+	navigation.currentRoute.bearingActual = 0.0;
+	navigation.currentRoute.bearingDirect = 0.0;
+	navigation.currentRoute.courseRequired = 0.0;
+	navigation.currentRoute.eta = 0;
+	navigation.currentRoute.route = "";
+	navigation.currentRoute.startTime =0;
+	navigation.currentRoute.waypoint.lastTime = 0;
+	navigation.currentRoute.waypoint.last ="";
+	navigation.currentRoute.waypoint.nextEta = 0;
+	navigation.currentRoute.waypoint.next = "";
+	navigation.currentRoute.waypoint.xte = 0.0;
+	navigation.magneticVariation  = 0.0;
+	navigation.destination.eta =0;
+	navigation.destination.longitude = 0.0;
+	navigation.destination.latitude = 0.0;
+	navigation.destination.altitude = 0.0;
+	navigation.drift = 0.0;
+	//navigation.gnss
+	navigation.headingMagnetic = 0.0;
+	navigation.headingTrue = 0.0;
+	navigation.position.longitude = 0.0;
+	navigation.position.latitude = 0.0;
+	navigation.position.altitude = 0.0;
+	navigation.pitch = 0.0;
+	navigation.rateOfTurn = 0.0;
+	navigation.roll = 0.0;
+	navigation.set = 0.0;
+	navigation.speedOverGround = 0.0;
+	navigation.speedThroughWater = 0.0;
+	navigation.state= NAV_NOT_DEFINED;
+	steering.rudderAngle = 0.0;
+	steering.rudderAngleTarget = 0.0;
+	steering.autopilot.state=AP_OFF;
+	steering.autopilot.mode=AP_NORMAL;
+	steering.autopilot.targetHeadingNorth = 0.0;
+	steering.autopilot.targetHeadingMagnetic = 0.0;
+	steering.autopilot.alarmHeadingXte = 0.0;
+	steering.autopilot.headingSource = AP_COMPASS;
+	steering.autopilot.deadZone = 0.0;
+	steering.autopilot.backlash = 0.0;
+	steering.autopilot.gain = 0.0;
+	steering.autopilot.maxDriveAmps = 0.0;
+	steering.autopilot.maxDriveRate = 0.0;
+	steering.autopilot.portLock = 0.0;
+	steering.autopilot.starboardLock = 0.0;
+	alarms.anchorAlarmMethod = ALRM_SOUND;
+	alarms.anchorAlarmState = ALRM_DISABLED;
+	alarms.autopilotAlarmMethod = ALRM_SOUND;
+	alarms.autopilotAlarmState = ALRM_DISABLED;
+	alarms.engineAlarmMethod = ALRM_SOUND;
+	alarms.engineAlarmState = ALRM_DISABLED;
+	alarms.fireAlarmMethod = ALRM_SOUND;
+	alarms.fireAlarmState = ALRM_DISABLED;
+	alarms.gasAlarmMethod = ALRM_SOUND;
+	alarms.gasAlarmState = ALRM_DISABLED;
+	alarms.gpsAlarmMethod = ALRM_SOUND;
+	alarms.gpsAlarmState = ALRM_DISABLED;
+	alarms.maydayAlarmMethod = ALRM_SOUND;
+	alarms.maydayAlarmState = ALRM_DISABLED;
+	alarms.panpanAlarmMethod = ALRM_SOUND;
+	alarms.panpanAlarmState = ALRM_DISABLED;
+	alarms.powerAlarmMethod = ALRM_SOUND;
+	alarms.powerAlarmState = ALRM_DISABLED;
+	alarms.silentInterval = 300; //seconds?
+	alarms.windAlarmMethod = ALRM_SOUND;
+	alarms.windAlarmState = ALRM_DISABLED;
+	environment.airPressureChangeRateAlarm = 0.0;
+	environment.airPressure = 1024.0;
+	environment.airTemp = 0.0;
+	environment.currentDirection = 0.0;
+	environment.currentSpeed = 0.0;
+	environment.depth.belowKeel = 0.0;
+	environment.depth.belowTransducer = 0.0;
+	environment.depth.belowSurface = 0.0;
+	environment.depth.transducerToKeel = 0.0;
+	environment.depth.surfaceToTransducer = 0.0;
+	environment.humidity = 0.0;
+	environment.salinity = 0.0;
+	environment.tide.heightHigh = 0.0;
+	environment.tide.heightNow = 0.0;
+	environment.tide.heightLow = 0.0;
+	environment.tide.timeLow =0;
+	environment.tide.timeHigh = 0;
+	environment.waterTemp=0;
+	environment.wind.directionApparent = 0.0;
+	environment.wind.directionChangeAlarm = 0.0;
+	environment.wind.directionTrue = 0.0;
+	environment.wind.speedAlarm = 0.0;
+	environment.wind.speedTrue = 0.0;
+	environment.wind.speedApparent = 0.0;
+
+}
+
+float SignalkModel::getNavigationCourseOverGroundMagnetic(){
+return navigation.courseOverGroundMagnetic;
+}
+float SignalkModel::getNavigationCourseOverGroundTrue(){
+return navigation.courseOverGroundTrue;
+}
+float SignalkModel::getNavigationCurrentRouteBearingActual(){
+return navigation.currentRoute.bearingActual;
+}
+float SignalkModel::getNavigationCurrentRouteBearingDirect(){
+return navigation.currentRoute.bearingDirect;
+}
+float SignalkModel::getNavigationCurrentRouteCourseRequired(){
+return navigation.currentRoute.courseRequired;
+}
+float SignalkModel::getNavigationCurrentRouteEta(){
+return navigation.currentRoute.eta;
+}
+float SignalkModel::getNavigationCurrentRouteRoute(){
+return navigation.currentRoute.route;
+}
+float SignalkModel::getNavigationCurrentRouteStartTime(){
+return navigation.currentRoute.startTime;
+}
+
+float SignalkModel::getNavigationCurrentRouteWaypointLastTime(){
+return navigation.currentRoute.waypoint.lastTime;
+}
+float SignalkModel::getNavigationCurrentRouteWaypointLast(){
+return navigation.currentRoute.waypoint.last;
+}
+float SignalkModel::getNavigationCurrentRouteWaypointNextEta(){
+return navigation.currentRoute.waypoint.nextEta;
+}
+float SignalkModel::getNavigationCurrentRouteWaypointNext(){
+return navigation.currentRoute.waypoint.next;
+}
+float SignalkModel::getNavigationCurrentRouteWaypointXte(){
+return navigation.currentRoute.waypoint.xte;
+}
+float SignalkModel::getNavigationMagneticVariation(){
+return navigation.magneticVariation;
+}
+float SignalkModel::getNavigationDestinationEta(){
+return navigation.destination.eta;
+}
+float SignalkModel::getNavigationDestinationLongitude(){
+return ;
+}
+float SignalkModel::getNavigationDestinationLatitude(){
+return navigation.destination.latitude;
+}
+float SignalkModel::getNavigationDestinationAltitude(){
+return navigation.destination.longitude;
+}
+float SignalkModel::getNavigationDrift(){
+return navigation.drift;
+}
+
+float SignalkModel::getNavigationHeadingMagnetic(){
+return navigation.headingMagnetic;
+}
+float SignalkModel::getNavigationHeadingTrue(){
+return navigation.headingTrue;
+}
+float SignalkModel::getNavigationPositionLongitude(){
+return navigation.position.longitude;
+}
+float SignalkModel::getNavigationPositionLatitude(){
+return navigation.position.latitude;
+}
+float SignalkModel::getNavigationPositionAltitude(){
+return navigation.position.altitude;
+}
+float SignalkModel::getNavigationPitch(){
+return navigation.pitch;
+}
+float SignalkModel::getNavigationRateOfTurn(){
+return navigation.rateOfTurn;
+}
+float SignalkModel::getNavigationRoll(){
+return navigation.roll;
+}
+float SignalkModel::getNavigationSet(){
+return navigation.set;
+}
+float SignalkModel::getNavigationSpeedOverGround(){
+return navigation.speedOverGround;
+}
+float SignalkModel::getNavigationSpeedThroughWater(){
+return navigation.speedThroughWater;
+}
+NavigationStateType SignalkModel::getNavigationState(){
+return navigation.state;
+}
+float SignalkModel::getSteeringRudderAngle(){
+return ;
+}
+float SignalkModel::getSteeringRudderAngleTarget(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotState(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotMode(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotTargetHeadingNorth(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotTargetHeadingMagnetic(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotAlarmHeadingXte(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotHeadingSource(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotDeadZone(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotBacklash(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotGain(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotMaxDriveAmps(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotMaxDriveRate(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotPortLock(){
+return ;
+}
+float SignalkModel::getSteeringAutopilotStarboardLock(){
+return ;
+}
+float SignalkModel::getAlarmsAnchorAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsAnchorAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsAutopilotAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsAutopilotAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsEngineAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsEngineAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsFireAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsFireAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsGasAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsGasAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsGpsAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsGpsAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsMaydayAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsMaydayAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsPanpanAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsPanpanAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsPowerAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsPowerAlarmState(){
+return ;
+}
+float SignalkModel::getAlarmsSilentInterval(){
+return ;
+}
+float SignalkModel::getAlarmsWindAlarmMethod(){
+return ;
+}
+float SignalkModel::getAlarmsWindAlarmState(){
+return ;
+}
+float SignalkModel::getEnvironmentAirPressureChangeRateAlarm(){
+return ;
+}
+float SignalkModel::getEnvironmentAirPressure(){
+return ;
+}
+float SignalkModel::getEnvironmentAirTemp(){
+return ;
+}
+float SignalkModel::getEnvironmentCurrentDirection(){
+return ;
+}
+float SignalkModel::getEnvironmentCurrentSpeed(){
+return ;
+}
+float SignalkModel::getEnvironmentDepthBelowKeel(){
+return ;
+}
+float SignalkModel::getEnvironmentDepthBelowTransducer(){
+return ;
+}
+float SignalkModel::getEnvironmentDepthBelowSurface(){
+return ;
+}
+float SignalkModel::getEnvironmentDepthTransducerToKeel(){
+return ;
+}
+float SignalkModel::getEnvironmentDepthSurfaceToTransducer(){
+return ;
+}
+float SignalkModel::getEnvironmentHumidity(){
+return ;
+}
+float SignalkModel::getEnvironmentSalinity(){
+return ;
+}
+float SignalkModel::getEnvironmentTideHeightHigh(){
+return ;
+}
+float SignalkModel::getEnvironmentTideHeightNow(){
+return ;
+}
+float SignalkModel::getEnvironmentTideHeightLow(){
+return ;
+}
+float SignalkModel::getEnvironmentTideTimeLow(){
+return ;
+}
+float SignalkModel::getEnvironmentTideTimeHigh(){
+return ;
+}
+float SignalkModel::getEnvironmentWaterTemp(){
+return ;
+}
+float SignalkModel::getEnvironmentWindDirectionApparent(){
+return ;
+}
+float SignalkModel::getEnvironmentWindDirectionChangeAlarm(){
+return ;
+}
+float SignalkModel::getEnvironmentWindDirectionTrue(){
+return ;
+}
+float SignalkModel::getEnvironmentWindSpeedAlarm(){
+return ;
+}
+float SignalkModel::getEnvironmentWindSpeedTrue(){
+return ;
+}
+float SignalkModel::getEnvironmentWindSpeedApparent();
+

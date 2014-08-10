@@ -1,0 +1,13 @@
+19:40:24 **** Incremental Build of configuration Release for project dueTest1 ****
+make all 
+Building file: /home/robert/dev/arduino-1.5.2/hardware/arduino/sam/cores/arduino/WInterrupts.c
+Starting C compile
+"/home/robert/dev/arduino-1.5.2/hardware/tools/g++_arm_none_eabi/bin/arm-none-eabi-gcc" -c -g -Os -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -Dprintf=iprintf -mcpu=cortex-m3 -DF_CPU=84000000L -DARDUINO=152 -D__SAM3X8E__ -mthumb -DUSB_PID=0x003e -DUSB_VID=0x2341 -DUSBCON "-I/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/system/libsam" "-I/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/system/CMSIS/CMSIS/Include/" "-I/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/system/CMSIS/Device/ATMEL/"   -MMD -MP -MF"arduino/WInterrupts.c.d" -MT"arduino/WInterrupts.c.d" -D__IN_ECLIPSE__=1 "/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/cores/arduino/WInterrupts.c"  -o  "arduino/WInterrupts.c.o"   -Wall
+In file included from /home/robert/dev/arduino-1.5.2/hardware/arduino/sam/cores/arduino/WInterrupts.h:22,
+                 from /home/robert/dev/arduino-1.5.2/hardware/arduino/sam/cores/arduino/WInterrupts.c:19:
+/home/robert/dev/arduino-1.5.2/hardware/arduino/sam/cores/arduino/Arduino.h:196: fatal error: variant.h: No such file or directory
+compilation terminated.
+make: *** [arduino/WInterrupts.c.o] Error 1
+
+19:40:24 Build Finished (took 344ms)
+
