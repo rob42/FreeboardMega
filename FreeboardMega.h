@@ -30,21 +30,21 @@ typedef unsigned char byte;
 
 #include "Arduino.h"
 //add your includes for the project  here
-#include "FreeboardConstants.h"
-#include <EEPROM.h>
-#include <MultiSerial.h>
+
 #include <FlexiTimer2.h>
-#include "Alarm.h"
-#include "Seatalk.h"
-#include "Wind.h"
-#include "Gps.h"
-#include "Anchor.h"
+#include <MultiSerial.h>
+#include <SignalkModel.h>
+#include <StreamJsonReader.h>
+#include <Wind.h>
 #include "NmeaSerial.h"
-#include "Autopilot.h"
-#include <stream_json_reader.h>
-#include <MemoryFree.h>
+#include <Alarm.h>
+#include <Gps.h>
+#include <Anchor.h>
 #include "NmeaRelay.h"
-#include "FreeboardModel.h"
+#include <Autopilot.h>
+#include <Levels.h>
+#include <Seatalk.h>
+#include <MemoryFree.h>
 
 //end of add your includes here
 #ifdef __cplusplus

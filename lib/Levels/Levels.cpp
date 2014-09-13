@@ -16,37 +16,38 @@
  *  You should have received a copy of the GNU General Public License
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 /*
- * NmeaSerial.h
+ * Levels.cpp
  *
- *  Created on: 23/12/2010
+ *  Created on: 19/12/2010
  *      Author: robert
  */
 
-#ifndef NMEASERIAL_H_
-#define NMEASERIAL_H_
+#include "Levels.h"
 
-#include "Arduino.h"
-#include <PString.h>
-#include <SignalkModel.h>
-#include <AltSoftSerial.h>
+Levels::Levels(SignalkModel* model) {
+	this->model=model;
 
+}
 
-class NmeaSerial: AltSoftSerial {
-public:
-	NmeaSerial(SignalkModel* signalkModel):signalkModel(signalkModel),cs(0){};
-	virtual ~NmeaSerial();
-	void printNmea(char* sentence);
-	void printTrueHeading();
-	void begin(long speed);
-	virtual size_t write(uint8_t) = 0;
-	    using Print::write; // pull in write(str) and write(buf, size) from Print
-private:
-	SignalkModel* signalkModel;
-	char windSentence [30];
-	char trueHeadingSentence [20];
-	byte cs;
-};
+Levels::~Levels() {
+
+}
 
 
-#endif /* NMEASERIAL_H_ */
+
+void Levels::checkLvlAlarms(){
+	//check lvl* alarm val, 0 is low, 1024 is high
+	int lvl1 = analogRead(lvl1Pin);
+	int lvl2 = analogRead(lvl2Pin);
+	int lvl3 = analogRead(lvl3Pin);
+			if ( (lvl1 < model->getValueInt(_ARDUINO_ALARM_LEVEL1_LOWER) || lvl1 >model->getValueInt(_ARDUINO_ALARM_LEVEL1_UPPER))
+				|| ( lvl2 < model->getValueInt(_ARDUINO_ALARM_LEVEL2_LOWER)  || lvl2 >model->getValueInt(_ARDUINO_ALARM_LEVEL2_UPPER))
+				|| ( lvl3 < model->getValueInt(_ARDUINO_ALARM_LEVEL3_LOWER)  || lvl3 >model->getValueInt(_ARDUINO_ALARM_LEVEL3_UPPER))) {
+
+			model->setValue(ALARMS_GENERICALARMSTATE,true);
+		} else {
+			model->setValue(ALARMS_GENERICALARMSTATE,false);
+		}
+}

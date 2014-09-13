@@ -15,8 +15,8 @@
 #include "Arduino.h"
 // include print support
 #include "Stream.h"
-#include "SPI.h"
-//#include "FreeboardConstants.h"
+#include <SPI.h>
+//#include "FreeBoardConstants.h"
 
 // General register set
 #define RHR       0x00    // Receive Holding Register - R

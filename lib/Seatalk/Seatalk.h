@@ -63,13 +63,13 @@
 #include "Arduino.h"
 
 #include "HardwareSerial.h"
-#include "FreeboardConstants.h"
-#include "FreeboardModel.h"
+//#include "FreeboardConstants.h"
+#include <SignalkModel.h>
 
 class Seatalk {
 
 public:
-	Seatalk( HardwareSerial* serial, FreeboardModel* model);
+	Seatalk( HardwareSerial* serial, SignalkModel* model);
 
 	void windAlarmOff();
 	void radarAlarmOff() ;
@@ -83,7 +83,7 @@ private:
 	//seatalk
 	volatile int seaTalkPos;
 	byte seatalkStream[20]; //Seatalk datagram is 3-18 chars
-	FreeboardModel* model;
+	SignalkModel* model;
 	HardwareSerial* serial;
 };
 #endif

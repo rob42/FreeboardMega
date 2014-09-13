@@ -1,20 +1,20 @@
 /*
  * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
  *
- * This file is part of Freeboard. (http://www.42.co.nz/freeboard)
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
- *  Freeboard is free software: you can redistribute it and/or modify
+ *  FreeBoard is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
 
- *  Freeboard is distributed in the hope that it will be useful,
+ *  FreeBoard is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 
  *  You should have received a copy of the GNU General Public License
- *  along with Freeboard.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* Autopilot code here*/
 /*Start with something very simple, a target heading. We
@@ -35,9 +35,9 @@ try to keep the boat on this target heading.
 
 #include "Arduino.h"
 
-#include "FreeboardConstants.h"
-#include "FreeboardModel.h"
-#include "Gps.h"
+//#include "FreeboardConstants.h"
+#include <SignalkModel.h>
+#include <Gps.h>
 #include <PID_v1.h>
 #include <Kangaroo.h>
 #include <MultiSerial.h>
@@ -56,15 +56,18 @@ try to keep the boat on this target heading.
 #define I_Param  0.08 //manual response time (in Seconds)/4. How fast it reacts.
 #define D_Param  0.52 //aggressive factor. Dampen oscillations. Change sign to invert command direction
 
+#define CS_PIN 67 //analog A13
+
 class Autopilot {
 public:
-	Autopilot(FreeboardModel* model);
+	Autopilot(SignalkModel* model);
 	~Autopilot();
 	void calcAutoPilot();
 	double getRudderCorrection();
 	void process(char* message);
 	void autopilotEvent();
 	void init();
+
 
 private:
 
@@ -77,7 +80,7 @@ private:
 	int inputSerialPos;
 	int inputAutopilotPos;
 
-	FreeboardModel* model;
+	SignalkModel* model;
 	PID headingPid;
 };
 

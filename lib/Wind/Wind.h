@@ -1,20 +1,20 @@
 /*
  * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
  *
- * This file is part of Freeboard. (http://www.42.co.nz/freeboard)
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
- *  Freeboard is free software: you can redistribute it and/or modify
+ *  FreeBoard is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
 
- *  Freeboard is distributed in the hope that it will be useful,
+ *  FreeBoard is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 
  *  You should have received a copy of the GNU General Public License
- *  along with Freeboard.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
  * Wind.h
@@ -30,8 +30,8 @@
 
 #include <PString.h>
 
-#include "FreeboardConstants.h"
-#include "FreeboardModel.h"
+//#include "FreeboardConstants.h"
+#include <SignalkModel.h>
 #include <AverageList.h>
 
 extern void saveWindAlarmState(bool windAlarmOn);
@@ -41,7 +41,8 @@ extern bool readWindAlarmState();
 class Wind {
 
 public:
-	Wind( FreeboardModel* model);
+	Wind( SignalkModel* signalkModel);
+	char* getWindNmea();
 	void calcWindSpeedAndDir();
 	void calcWindData();
 	void readWindDataSpeed();
@@ -53,9 +54,12 @@ public:
 	float itan(long x);
 	float fsin(float d);
 	int getRotationalAverage();
+	void checkWindAlarm();
 private:
 
-	FreeboardModel* model;
+	char windSentence [30];
+	byte cs;
+	SignalkModel* signalkModel;
 
 };
 #endif /* WIND_H_ */

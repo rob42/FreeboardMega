@@ -59,7 +59,7 @@
 
 #include "Seatalk.h"
 
-	Seatalk::Seatalk( HardwareSerial* serial, FreeboardModel* model) {
+	Seatalk::Seatalk( HardwareSerial* serial, SignalkModel* model) {
 	this->model=model;
 	this->serial=serial;
 	seaTalkPos = 0;
@@ -110,10 +110,10 @@ void Seatalk::windCommand(byte * seatalkStream) {
 	if (seatalkStream[1] == 0x00) {
 		if (seatalkStream[2] == 0x00) {
 			//alarm off
-			model->setWindAlarmTriggered(false);
+			model->setValue(ALARMS_WINDALARMSTATE,ALRM_ENABLED);
 		} else {
-			model->setAlarmSnooze(0);
-			model->setWindAlarmTriggered(true);
+			model->setValue(_ARDUINO_ALARM_SNOOZE,0);
+			model->setValue(ALARMS_WINDALARMSTATE,ALRM_FIRING);
 		}
 
 	}
@@ -125,14 +125,14 @@ void Seatalk::radarCommand(byte * seatalkStream) {
 			&& seatalkStream[4] == 0x00) {
 		if (seatalkStream[5] == 0xD3) {
 			if (DEBUG)
-				Serial.println(F("  Radar Guard Zone Alarm ON"));
-			model->setAlarmSnooze(0);
-			model->setRadarAlarmTriggered(true);
+				Serial.println("  Radar Guard Zone Alarm ON");
+			model->setValue(_ARDUINO_ALARM_SNOOZE,0);
+			model->setValue(ALARMS_RADARALARMSTATE,ALRM_FIRING);
 		}
 		if (seatalkStream[5] == 0xC3) {
 			if (DEBUG)
-				Serial.println(F("  Radar Guard Zone Alarm OFF"));
-			model->setRadarAlarmTriggered(false);
+				Serial.println("  Radar Guard Zone Alarm OFF");
+			model->setValue(ALARMS_RADARALARMSTATE,ALRM_ENABLED);
 		}
 
 	}
@@ -157,15 +157,16 @@ void Seatalk::processSeatalk(byte * seatalkStream) {
 				&& seatalkStream[6] == 0x00 && seatalkStream[7] == 0x00
 				&& seatalkStream[8] == 0x00 && seatalkStream[9] == 0x00) {
 			if (DEBUG)
-				Serial.println(F("  MOB Alarm ON"));
-			model->setMobAlarmTriggered(true);
+				Serial.println("  MOB Alarm ON");
+			model->setValue(_ARDUINO_ALARM_SNOOZE,0);
+			model->setValue(ALARMS_MOBALARMSTATE,ALRM_FIRING);
 		}
 		break;
 	case 0x36:
 		if (seatalkStream[1] == 0x00 && seatalkStream[2] == 0x01) {
 			if (DEBUG)
-				Serial.println(F("  Cancel MOB Alarm"));
-			model->setMobAlarmTriggered(false);
+				Serial.println("  Cancel MOB Alarm");
+			model->setValue(ALARMS_MOBALARMSTATE,ALRM_ENABLED);
 		}
 		break;
 

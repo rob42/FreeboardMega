@@ -1,5 +1,5 @@
 /*
- * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
+ * Copyright 2012,2013 Robert Huitema robert@42.co.nz
  *
  * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
@@ -17,36 +17,32 @@
  *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * NmeaSerial.h
+ * Alarm.h
  *
- *  Created on: 23/12/2010
+ *  Created on: 19/12/2010
  *      Author: robert
  */
 
-#ifndef NMEASERIAL_H_
-#define NMEASERIAL_H_
+#ifndef LEVELS_H_
+#define LEVELS_H_
 
 #include "Arduino.h"
-#include <PString.h>
+
+#define lvl3Pin A12 // analogue pin A12
+#define lvl1Pin A10
+#define lvl2Pin A11
+
 #include <SignalkModel.h>
-#include <AltSoftSerial.h>
 
-
-class NmeaSerial: AltSoftSerial {
+class Levels {
 public:
-	NmeaSerial(SignalkModel* signalkModel):signalkModel(signalkModel),cs(0){};
-	virtual ~NmeaSerial();
-	void printNmea(char* sentence);
-	void printTrueHeading();
-	void begin(long speed);
-	virtual size_t write(uint8_t) = 0;
-	    using Print::write; // pull in write(str) and write(buf, size) from Print
+	Levels(SignalkModel* model);
+	virtual ~Levels();
+	void checkLvlAlarms();
+
 private:
-	SignalkModel* signalkModel;
-	char windSentence [30];
-	char trueHeadingSentence [20];
-	byte cs;
+	SignalkModel* model;
+
 };
 
-
-#endif /* NMEASERIAL_H_ */
+#endif /* LEVELS_H_ */

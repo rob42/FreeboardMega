@@ -1,20 +1,20 @@
 /*
  * Copyright 2010,2011,2012,2013 Robert Huitema robert@42.co.nz
  *
- * This file is part of Freeboard. (http://www.42.co.nz/freeboard)
+ * This file is part of FreeBoard. (http://www.42.co.nz/freeboard)
  *
- *  Freeboard is free software: you can redistribute it and/or modify
+ *  FreeBoard is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
 
- *  Freeboard is distributed in the hope that it will be useful,
+ *  FreeBoard is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
 
  *  You should have received a copy of the GNU General Public License
- *  along with Freeboard.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with FreeBoard.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*=== MWV - Wind Speed and Angle ===
  
@@ -91,8 +91,8 @@ const unsigned int isinTable16[] = { 0, 1144, 2287, 3430, 4571, 5712, 6850, 7987
 
 AverageList<val> dirList = AverageList<val>(dirStorage, MAX_NUMBER_OF_READINGS);
 
-Wind::Wind(FreeboardModel* model) {
-	this->model = model;
+Wind::Wind(SignalkModel* signalkModel) {
+	this->signalkModel = signalkModel;
 	//initialise the wind interrupt
 	windSpeedMicros = micros();
 	windSpeedMicrosLast = windSpeedMicros;
@@ -100,10 +100,11 @@ Wind::Wind(FreeboardModel* model) {
 	windSpeedDur = 0;
 	windSpeedFlag = true;
 	dirList.reset();
+	cs=0;
 
 	// read the last wind alarm values
-	if (model->getWindAlarmSpeed() > 99) {
-		model->setWindAlarmSpeed(99);
+	if (signalkModel->getValueFloat(ENVIRONMENT_WIND_SPEEDALARM) > 99.0) {
+		signalkModel->setValue(ENVIRONMENT_WIND_SPEEDALARM,99.0f);
 	}
 }
 
@@ -301,12 +302,12 @@ void Wind::calcWindData() {
 	if (millis() < lastSpeedPulse) lastSpeedPulse = millis();
 	if (millis() < lastDirPulse) lastDirPulse = millis();
 
-	model->setWindLastUpdate(millis());
+	signalkModel->setValue(_ARDUINO_WIND_LASTUPDATE, (unsigned long)millis());
 
 //convert to windAverage
 	if (millis() - lastSpeedPulse > 3000) {
 		//no rotation, no wind
-		model->setWindAverage(0);
+		signalkModel->setValue(_ARDUINO_WIND_AVERAGE,0);
 		//Serial.println("Wind speed reset");
 	} else {
 		//windSpeedDur is type long -  max sensor value = 3000000 micros
@@ -319,23 +320,23 @@ void Wind::calcWindData() {
 			if (windSpeedRps < 323) {
 				//need extra accuracy here, zero is very unlikely
 				windSpeedRps = windSpeedRps * 10;
-				model->setWindAverage((((((windSpeedRps * windSpeedRps) / -105) + ((25476 * windSpeedRps) / 100) - 12260)) / model->getWindFactor())/10);
+				signalkModel->setValue(_ARDUINO_WIND_AVERAGE,(((((windSpeedRps * windSpeedRps) / -105) + ((25476 * windSpeedRps) / 100) - 12260)) / signalkModel->getValueFloat(_ARDUINO_WIND_FACTOR)/10));
 			} else if (windSpeedRps < 5436) {
 				//rps2 = min 10426441, max 30,864,197, cant get div/0 here?
-				model->setWindAverage((((windSpeedRps * windSpeedRps) / 2222) + ((19099 * windSpeedRps) / 100) + 9638) / model->getWindFactor());
+				signalkModel->setValue(_ARDUINO_WIND_AVERAGE,(((windSpeedRps * windSpeedRps) / 2222) + ((19099 * windSpeedRps) / 100) + 9638) / signalkModel->getValueFloat(_ARDUINO_WIND_FACTOR));
 			} else {
-				model->setWindAverage(((((windSpeedRps * windSpeedRps) / 1042) * 100) - (8314700 * windSpeedRps) + 2866500) / model->getWindFactor());
+				signalkModel->setValue(_ARDUINO_WIND_AVERAGE,((((windSpeedRps * windSpeedRps) / 1042) * 100) - (8314700 * windSpeedRps) + 2866500) / signalkModel->getValueFloat(_ARDUINO_WIND_FACTOR));
 			}
 		}
 		//update gusts
-		if (model->getWindAverage() > model->getWindMax()) model->setWindMax(model->getWindAverage());
+		if (signalkModel->getValueFloat(_ARDUINO_WIND_AVERAGE) > signalkModel->getValueFloat(_ARDUINO_WIND_MAX)) signalkModel->setValue(_ARDUINO_WIND_MAX,signalkModel->getValueFloat(_ARDUINO_WIND_AVERAGE));
 
 		// calc direction, in degrees clockwise
 		//should round to int, min 1
 		int dir = (int) getRotationalAverage();
 		//limit to +-360, after adjust zero
 		//C = A – B * (A / B)
-		dir = (dir + model->getWindZeroOffset()); // %360;
+		dir = (dir + signalkModel->getValueFloat(_ARDUINO_WIND_ZEROOFFSET)); // %360;
 		//if (dir != 0) {
 		//	dir = dir - 360 * (dir / 360);
 		//}
@@ -343,7 +344,63 @@ void Wind::calcWindData() {
 		if (dir < 0) {
 			dir = 360 + dir;
 		}
-		model->setWindApparentDir(dir);
+		signalkModel->setValue(ENVIRONMENT_WIND_DIRECTIONAPPARENT,(int)dir);
 	}
+
 }
+void Wind::checkWindAlarm(){
+	//check alarm val
+		if (!signalkModel->isAlarmTriggered(ALARMS_WINDALARMSTATE))return;
+
+		if (signalkModel->getValueFloat(ENVIRONMENT_WIND_SPEEDALARM) > 0
+				&& signalkModel->getValueFloat(_ARDUINO_WIND_AVERAGE) > signalkModel->getValueFloat(ENVIRONMENT_WIND_SPEEDALARM)) {
+			//TODO: Alarm snooze, better handling of this
+			//setSnoozeAlarm(0);
+			if (!signalkModel->isAlarmTriggered(ALARMS_WINDALARMSTATE)){
+				signalkModel->setValue(ALARMS_WINDALARMSTATE, AlarmStateString[ALRM_FIRING]);
+			}
+		} else {
+			signalkModel->setValue(ALARMS_WINDALARMSTATE, AlarmStateString[ALRM_ENABLED]);
+		}
+}
+
+
+/*=== MWV - Wind Speed and Angle ===
+ *
+ * ------------------------------------------------------------------------------
+ *        1   2 3   4 5
+ *         |   | |   | |
+ *  $--MWV,x.x,a,x.x,a*hh<CR><LF>
+ * ------------------------------------------------------------------------------
+ *
+ * Field Number:
+ *
+ * 1. Wind Angle, 0 to 360 degrees
+ * 2. Reference, R = Relative, T = True
+ * 3. Wind Speed
+ * 4. Wind Speed Units, K/M/N
+ * 5. Status, A = Data Valid
+ * 6. Checksum
+ *
+ */
+char* Wind::getWindNmea() {
+	//Assemble a sentence of the various parts so that we can calculate the proper checksum
+
+	PString str(windSentence, sizeof(windSentence));
+	str.print("$WIMWV,");
+	str.print(signalkModel->getValueFloat(ENVIRONMENT_WIND_DIRECTIONAPPARENT));
+	str.print(",R,");
+	str.print(signalkModel->getValueFloat(ENVIRONMENT_WIND_SPEEDAPPARENT));
+	str.print(",N,A*");
+	//calculate the checksum
+
+	cs = signalkModel->getChecksum(windSentence); //clear any old checksum
+	//bug - arduino prints 0x007 as 7, 0x02B as 2B, so we add it now
+	if (cs < 0x10) str.print('0');
+	str.print(cs, HEX); // Assemble the final message and send it out the serial port
+	return windSentence;
+
+}
+
+
 

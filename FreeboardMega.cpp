@@ -58,7 +58,7 @@
 
 #include "FreeboardMega.h"
 
-using namespace stream_json_reader;
+
 
 volatile boolean execute = false;
 volatile int interval = 0;
@@ -68,16 +68,14 @@ int inByteSerial3;
 int inByteSerial4;
 char input;
 
-
 //freeboard model
-FreeboardModel model;
-
+SignalkModel signalkModel;
 
 //NMEA output - The arduino puts out TTL, NMEA is RS232. They are different V and amps. The +-5V levels may need inverting or you get
 // garbage.
 // See http://forums.parallax.com/forums/default.aspx?f=19&m=50925
 // See http://www.avrfreaks.net/index.php?name=PNphpBB2&file=printview&t=63469&start=0
-NmeaSerial nmea(&model);
+//NmeaSerial nmea(&signalkModel);
 
 //NMEA ports
 NMEA gpsSource(ALL);
@@ -87,30 +85,28 @@ NMEARelay talker3(ALL);
 NMEARelay talker4(ALL);
 
 //alarm
-Alarm alarm(&model);
+Alarm alarm(&signalkModel);
 
 //wind
-Wind wind(&model);
+Wind wind(&signalkModel);
 
 //Gps
-Gps gps(&gpsSource, &model);
+Gps gps(&gpsSource, &signalkModel);
 
 
 MultiSerial mSerial1 = MultiSerial(CS_PIN,1); //NMEA4
 //Autopilot
 
-Autopilot autopilot( &model);
+Autopilot autopilot( &signalkModel);
 
 //Anchor
-Anchor anchor(&model);
+Anchor anchor(&signalkModel);
 
-Seatalk seatalk(&Serial2, &model);
+Seatalk seatalk(&Serial2, &signalkModel);
 
 
-char inputSerialArray[100];
-//char inputAutopilotArray[50];
+char inputSerialArray[200];
 int inputSerialPos=0;
-//int inputAutopilotPos=0;
 
 boolean inputSerial1Complete = false; // whether the GPS string is complete
 boolean inputSerial2Complete = false; // whether the string is complete
@@ -118,46 +114,43 @@ boolean inputSerial3Complete = false; // whether the string is complete
 boolean inputSerial4Complete = false; // whether the string is complete
 
 //json support
-//{"navigation": {"position": {"longitude": "173.2" ,"latitude": "-41.5"}}}
-//{"navigation":{ "position":{"longitude":173.5, "latitude":-43.5}}}
-static const char* queries[] = { "navigation.position.latitude", "navigation.position.longitude"};
-StreamJsonReader jsonreader(&Serial, queries, 2);
+StreamJsonReader jsonreader(&Serial, &signalkModel);
 
 
 void setup() {
 	//model.saveConfig();
-	model.readConfig();
+	//signalkModel.readConfig();
 
 	// initialize  serial ports:
-	Serial.begin(model.getSerialBaud(), SERIAL_8N1);
+	Serial.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD0));
 	if (DEBUG) Serial.println(F("Initializing.."));
 	
 	//start gps on serial1, autobaud
-	//if (DEBUG) Serial.println(F("Start gps.."));
+	if (DEBUG) Serial.println(F("Start gps.."));
 	gps.setupGps();
 	if (DEBUG) {
 		Serial.print(F("Start GPS Rx - serial1 at "));
-		Serial.println(model.getSerialBaud1());
+		Serial.println(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD1));
 	}
 
-	Serial1.begin(model.getSerialBaud1());
+	Serial1.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD1));
 
-	if (model.getSeaTalk()) {
+	if (signalkModel.getValueBool(_ARDUINO_SEATALK)) {
 		if (DEBUG) Serial.println(F("Start seatalk - serial2 at 4800"));
 		Serial2.begin(4800, SERIAL_9N1); //Seatalk interface
 	} else {
 		if (DEBUG) {
 			Serial.print(F("Start nmea Rx - serial2 at "));
-			Serial.println(model.getSerialBaud2());
+			Serial.println(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD2));
 		}
-		Serial2.begin(model.getSerialBaud2(), SERIAL_8N1);
+		Serial2.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD2), SERIAL_8N1);
 	}
 
 	if (DEBUG) {
 		Serial.print(F("Start nmea Rx - serial3 at "));
-		Serial.println(model.getSerialBaud3());
+		Serial.println(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD3));
 	}
-	Serial3.begin(model.getSerialBaud3(), SERIAL_8N1); //talker2
+	Serial3.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD3), SERIAL_8N1); //talker2
 
 	if (DEBUG) Serial.println(F("Start SPI uarts.."));
 		delay(1000);
@@ -170,18 +163,18 @@ void setup() {
 
 	if (DEBUG) {
 			Serial.print(F("Start nmea Rx - serial4 at "));
-			Serial.println(model.getSerialBaud4());
+			Serial.println(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD4));
 		}
-	mSerial1.begin(model.getSerialBaud4()); //talker3
+	mSerial1.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD4)); //talker3
 	delay(100);
 	if (DEBUG) Serial.println(F("Start nmea Tx.."));
 		pinMode(nmeaRxPin, INPUT);
 		pinMode(nmeaTxPin, OUTPUT);
 		if (DEBUG) {
 			Serial.print(F("Start nmea Tx - on pins 46 Tx, 48 Rx at "));
-			Serial.println(model.getSerialBaud5());
+			Serial.println(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD5));
 		}
-	nmea.begin(model.getSerialBaud5());
+		//nmea.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD5));
 
 	autopilot.init();
 
@@ -206,6 +199,11 @@ void setup() {
 	if (DEBUG) Serial.println(F("Setup complete.."));
 	//print out the config
 	//model.sendData(Serial, CONFIG_T);
+	signalkModel.printVesselWrapper(&Serial);
+
+	//TODO: setup lvl3 pin - actually its analogue
+	pinMode(lvl3Pin, INPUT);
+
 }
 /*
  * Timer interrupt driven method to do time sensitive calculations
@@ -236,32 +234,16 @@ void readWDD() {
  See http://joost.damad.be/2012/01/arduino-mega-and-multiple-hardware.html
  */
 void serialEvent() {
-	while (Serial.available()) {
-		// get the new byte:
-		char inChar = (char) Serial.read();
-		//try out the json reader here
-		jsonreader.process_char(inChar);
+	while (Serial.available()>=2) {
+			// get the new byte:
+			char inChar = (char) Serial.read();
+			//try out the json reader here
+			if(jsonreader.process_char(inChar)>0){
+				Serial.println("Reset");
 
-		// add it to the inputString:
-		inputSerialArray[inputSerialPos]=inChar;
-					inputSerialPos++;
-		
-		if (inChar == '\n' || inChar == '\r' || inputSerialPos>98) {
-			//null to mark this array end
-			inputSerialArray[inputSerialPos]='\0';
-			//process(inputSerialArray, ',');
-			Serial.println(inputSerialArray);
-			inputSerialPos=0;
-			memset(inputSerialArray, 0, sizeof(inputSerialArray));
-			//and also dump out the json
-			Serial.print(F("jsonreader.results[0] = "));
-			Serial.println(jsonreader.results[0]);
-			Serial.print(F("jsonreader.results[1] = "));
-			Serial.println(jsonreader.results[1]);
+			}
+
 		}
-		//Serial.println(inputSerialArray);
-
-	}
 
 }
 
@@ -270,7 +252,7 @@ void serialEvent1() {
 		inputSerial1Complete = gps.decode(Serial1.read());
 		// read from port 1 (GPS), send to port 0:
 		if (inputSerial1Complete) {
-			if (MUX) nmea.printNmea(gpsSource.sentence());
+			//if (MUX) nmea.printNmea(gpsSource.sentence());
 			Serial.println(gpsSource.sentence());
 			//loop every sentence
 			break;
@@ -280,12 +262,12 @@ void serialEvent1() {
 
 void serialEvent2() {
 	while (Serial2.available()) {
-		if (model.getSeaTalk()) {
+		if (signalkModel.getValueBool(_ARDUINO_SEATALK)) {
 			seatalk.processSeaTalkByte(Serial2.read());
 		} else {
 			inputSerial2Complete = talker2.decode(Serial2.read());
 			if (inputSerial2Complete) {
-				if (MUX) nmea.printNmea(talker2.sentence());
+				//if (MUX) nmea.printNmea(talker2.sentence());
 				Serial.println(talker2.sentence());
 				//loop every sentence
 				break;
@@ -300,7 +282,7 @@ void serialEvent3() {
 		Serial.println(b);
 		inputSerial3Complete = talker3.decode(b);
 		if (inputSerial3Complete) {
-			if (MUX) nmea.printNmea(talker3.sentence());
+			//if (MUX) nmea.printNmea(talker3.sentence());
 			Serial.println(talker3.sentence());
 			//loop every sentence
 			break;
@@ -315,7 +297,7 @@ void serialEvent4() {
 		Serial.println(b);
 		inputSerial4Complete = talker4.decode(b);
 		if (inputSerial4Complete) {
-			if (MUX) nmea.printNmea(talker4.sentence());
+			//if (MUX) nmea.printNmea(talker4.sentence());
 			Serial.println(talker4.sentence());
 			//loop every sentence
 			break;
@@ -339,22 +321,27 @@ void loop() {
 		}
 		if (interval % 50 == 0) {
 			//do every 500ms
-			wind.calcWindSpeedAndDir();
 			wind.calcWindData();
-			nmea.printWindNmea();
-			//fire any alarms
-			alarm.checkAlarms();
-			model.writeSimple(Serial);
+
+			//signalkModel.writeSimple(Serial);
 		}
 		if (interval % 100 == 0) {
-			Serial.print("freeMemory()=");
-			Serial.println(freeMemory());
+			//Serial.println(freeMemory());
 			//do every 1000ms
+			//Serial.println(wind.getWindNmea());
+			//nmea.printNmea(wind.getWindNmea());
+			//nmea.printTrueHeading();
+
+			//do alarm stuff here
 			anchor.checkAnchor();
-			alarm.checkWindAlarm();
-			alarm.checkLvlAlarms();
-			nmea.printTrueHeading();
-			
+			wind.checkWindAlarm();
+			//levels.checkLvlAlarms();
+			alarm.checkAlarms();
+			//signalkModel.printVesselWrapper(&Serial);
+			signalkModel.printVesselWrapper(&Serial);
+			jsonreader.reset();
+			//Serial.print("freeMemory()=");
+			//Serial.println(freeMemory());
 		}
 
 		execute = false;
@@ -369,151 +356,6 @@ void loop() {
 
 
 
-
-
-void process(char * s, char parser) {
-	//if (DEBUG) Serial.print("Process str:");
-	//if (DEBUG) Serial.println(s);
-	char *cmd = strtok(s, ",");
-	while (cmd != NULL && strlen(cmd) > 3) {
-		//starts with # its a command
-		//if (DEBUG) Serial.print("Process incoming..l=");
-		//if (DEBUG) Serial.print(strlen(cmd));
-		//if (DEBUG) Serial.print(", ");
-		//if (DEBUG) Serial.println(cmd);
-
-		char key[5];
-		int l = strlen(cmd);
-		bool save = false;
-		if (cmd[0] == '#') {
-			//
-			strncpy(key, cmd, 4);
-			key[4] = '\0';
-			char val[l - 4];
-			memcpy(val, &cmd[5], l - 5);
-			val[l - 5] = '\0';
-			//if (DEBUG) Serial.print(key);
-			//if (DEBUG) Serial.print(" = ");
-			//if (DEBUG) Serial.println(val);
-
-			//anchor
-			if (strcmp(key, ANCHOR_ALARM_STATE) == 0) {
-				//if (DEBUG) Serial.print("AA Entered..");
-				model.setAnchorAlarmOn(atoi(val));
-				if (atoi(val) == 1) {
-					anchor.setAnchorPoint();
-				}
-				save = true;
-			} else if (strcmp(key, ANCHOR_ALARM_ADJUST) == 0) {
-				model.setAnchorRadius(model.getAnchorRadius() + atof(val));
-				save = true;
-			} else if (strcmp(key, ANCHOR_ALARM_LAT) == 0) {
-				model.setAnchorLat(atof(val));
-				save = true;
-			} else if (strcmp(key, ANCHOR_ALARM_LON) == 0) {
-				model.setAnchorLon(atof(val));
-				save = true;
-			}
-			//autopliot
-			else if (strcmp(key, AUTOPILOT_STATE) == 0) {
-				//if (DEBUG) Serial.print("AP Entered..");
-				//if (DEBUG) Serial.println(val);
-				//this is potentailly dangerous, since we dont want the boat diving off on an old target heading.
-				//in model we ALWAYS reset to current magnetic or wind heading at this point
-				model.setAutopilotOn(atoi(val));
-			} else if (strcmp(key, AUTOPILOT_ADJUST) == 0) {
-				model.setAutopilotTargetHeading(model.getAutopilotTargetHeading() + atol(val));
-			} else if (strcmp(key, AUTOPILOT_SOURCE) == 0) {
-				model.setAutopilotReference(val[0]);
-			}
-			//wind
-			else if (strcmp(key, WIND_SPEED_ALARM_STATE) == 0) {
-				model.setWindAlarmOn(atoi(val));
-				save = true;
-			} else if (strcmp(key, WIND_ALARM_KNOTS) == 0) {
-				model.setWindAlarmSpeed(atoi(val));
-				save = true;
-			} else if (strcmp(key, WIND_ZERO_ADJUST) == 0) {
-				model.setWindZeroOffset(atoi(val));
-				save = true;
-			} else if (strcmp(key, LEVEL1_UPPER_ALARM) == 0) {
-				model.setLvl1UpperLimit(atoi(val));
-				save = true;
-			} else if (strcmp(key, LEVEL1_LOWER_ALARM) == 0) {
-				model.setLvl1LowerLimit(atoi(val));
-				save = true;
-			} else if (strcmp(key, LEVEL2_UPPER_ALARM) == 0) {
-				model.setLvl2UpperLimit(atoi(val));
-				save = true;
-			} else if (strcmp(key, LEVEL2_LOWER_ALARM) == 0) {
-				model.setLvl2LowerLimit(atoi(val));
-				save = true;
-			} else if (strcmp(key, LEVEL3_UPPER_ALARM) == 0) {
-				model.setLvl3UpperLimit(atoi(val));
-				save = true;
-			} else if (strcmp(key, LEVEL3_LOWER_ALARM) == 0) {
-				model.setLvl3LowerLimit(atoi(val));
-				save = true;
-			}else if (strcmp(key, CONFIG) == 0) {
-				//Serial.println("Sending config..");
-				model.writeConfig(Serial);
-			}
-			//gps,serial,seatalk
-			else if (strcmp(key, GPS_MODEL) == 0) {
-				model.setGpsModel(atoi(val));
-				save = true;
-			} else if (strcmp(key, SERIAL_BAUD0) == 0) {
-				model.setSerialBaud(atol(val));
-				save = true;
-			} else if (strcmp(key, SERIAL_BAUD1) == 0) {
-				model.setSerialBaud1(atol(val));
-				save = true;
-			} else if (strcmp(key, SERIAL_BAUD2) == 0) {
-				model.setSerialBaud2(atol(val));
-				save = true;
-			} else if (strcmp(key, SERIAL_BAUD3) == 0) {
-				model.setSerialBaud3(atol(val));
-				save = true;
-			} else if (strcmp(key, SEATALK) == 0) {
-				model.setSeaTalk(atoi(val));
-				save = true;
-			}
-			if (save) model.saveConfig();
-
-		} else {
-			strncpy(key, cmd, 3);
-			key[3] = '\0';
-			char val[l - 3];
-			memcpy(val, &cmd[4], l - 4);
-			val[l - 4] = '\0';
-			//if (DEBUG) Serial.print(key);
-			//if (DEBUG) Serial.print(" = ");
-			//if (DEBUG) Serial.println(val);
-			// incoming data = WST,WSA,WDT,WDA,WSU,LAT,LON,COG,MGH,SOG,YAW
-			if (strcmp(key, MGH) == 0) {
-				model.setMagneticHeading(atof(val));
-			}
-			if (strcmp(key, DECL) == 0) {
-				model.setDeclination(atof(val));
-			}
-			if (strcmp(key, WDT) == 0) {
-				model.setWindTrueDir(atoi(val));
-			}
-
-		}
-		//next token
-		cmd = strtok(NULL, ",");
-	}
-	//if (DEBUG) Serial.println("Process str exit");
-}
-
-byte getChecksum(char* str) {
-	byte cs = 0; //clear any old checksum
-	for (unsigned int n = 1; n < strlen(str) - 1; n++) {
-		cs ^= str[n]; //calculates the checksum
-	}
-	return cs;
-}
 
 
 
