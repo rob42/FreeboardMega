@@ -540,8 +540,6 @@ unsigned long SignalkModel::getValueLong(unsigned long key) {
 	case _ARDUINO_SERIAL_BAUD4: 	return _arduino.serial.baud4; break;
 	case _ARDUINO_SERIAL_BAUD5: 	return _arduino.serial.baud5; break;
 
-
-
 	}
 	return SIZE_MAX;
 }

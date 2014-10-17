@@ -214,73 +214,78 @@ void SignalkHelper::closeBranch(HardwareSerial* serial, bool last){
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const float value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\":");
+	serial->print("\": {\"value\":");
 	if( value!=value){
 		serial->print("null");
 	}else{
 		serial->print(value,DEC);
 	}
+	serial->print("}");
 	if(!last)serial->print(",");
 }
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const unsigned long value, bool last){
 	serial->print("\"");
-	print_PROGMEM(serial, key);
-	serial->print("\":");
+	print_PROGMEM(serial, key);serial->print("\": {\"value\":");
 	if(value==SIZE_MAX){
 			serial->print("null");
 		}else{
 			serial->print(value,DEC);
 		}
-	if(!last)serial->print(",");
+	serial->print("}");
+	if(!last)serial->print("}\,");
 }
 
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const int value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\":");
+	serial->print("\": {\"value\":");
 	if(value==SIZE_MAX){
 			serial->print("null");
 		}else{
 			serial->print(value,DEC);
 		}
+	serial->print("}");
 	if(!last)serial->print(",");
 }
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const long value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\":");
+	serial->print("\": {\"value\":");
 	if(value==SIZE_MAX){
 			serial->print("null");
 		}else{
 			serial->print(value,DEC);
 		}
+	serial->print("}");
 	if(!last)serial->print(",");
 }
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const bool value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\":");
+	serial->print("\": {");
+		serial->print("\"value\":");
 	if(value){
 			serial->print("true");
 	}else{
 		serial->print("false");
 	}
+	serial->print("}");
 	if(!last)serial->print(",");
 }
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key,  const char* value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\":\"");
+	serial->print("\": {\"value\":");
 	serial->print(value);
-	serial->print("\"");
+	serial->print("\"}");
 	if(!last)serial->print(",");
 }
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key,  const char value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	//serial->print(key);
-	serial->print("\":");
+	serial->print("\": {\"value\":");
 	serial->print(value);
+	serial->print("}");
 	if(!last)serial->print(",");
 }
 
