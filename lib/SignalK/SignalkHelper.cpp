@@ -275,7 +275,7 @@ void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const bo
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key,  const char* value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\": {\"value\":");
+	serial->print("\": {\"value\":\"");
 	serial->print(value);
 	serial->print("\"}");
 	if(!last)serial->print(",");
@@ -283,9 +283,9 @@ void SignalkHelper::printValue(HardwareSerial* serial, const char* key,  const c
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key,  const char value, bool last){
 	serial->print("\"");
 	print_PROGMEM(serial, key);
-	serial->print("\": {\"value\":");
+	serial->print("\": {\"value\":\"");
 	serial->print(value);
-	serial->print("}");
+	serial->print("\"}");
 	if(!last)serial->print(",");
 }
 
