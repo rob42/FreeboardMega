@@ -232,7 +232,7 @@ void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const un
 			serial->print(value,DEC);
 		}
 	serial->print("}");
-	if(!last)serial->print("}\,");
+	if(!last)serial->print("},");
 }
 
 void SignalkHelper::printValue(HardwareSerial* serial, const char* key, const int value, bool last){

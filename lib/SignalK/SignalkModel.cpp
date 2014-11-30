@@ -150,7 +150,7 @@ SignalkModel::SignalkModel() {
 	steering.autopilot.portLock = 0.0;
 	steering.autopilot.starboardLock = 0.0;
 	_arduino.gps.decode = false;
-	_arduino.gps.model = 0;
+	_arduino.gps.model = GPS_EM_406A;
 	_arduino.gps.lastFix = 0UL;
 	_arduino.gps.utc = 0UL;
 	_arduino.gps.status = GPS_WARN;

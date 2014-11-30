@@ -74,7 +74,9 @@ long Gps::detectRate(int rcvPin)  // function to return valid received baud rate
   digitalWrite (rcvPin, HIGH); // pull up enabled just for noise protection
 
   for (int i = 0; i < 1024; i++) {
+	  //skip a few, to clear rubbish
       x = pulseIn(rcvPin,LOW, 125000);   // measure the next zero bit width
+      if(i<10)continue;
       if(x<1)continue;
       rate = x < rate ? x : rate;
   }
@@ -166,9 +168,22 @@ void Gps::setupGps() {
 	 8 ZDA (if 1PPS output is supported)
 	 9 Not defined
 	 */
-	autoBaud();
+	unsigned long baud = autoBaud();
 
-	setupGpsImpl();
+	Serial.println(F("Setting GPS config...") );
+	int gpsModel = model->getValueInt(_ARDUINO_GPS_MODEL);
+	if(GPS_GENERIC == gpsModel){
+			Serial.println(F("Setting GPS to GENERIC") );
+			//we set this now, as we dont know how to alter it.
+			model->setValue(_ARDUINO_SERIAL_BAUD1,baud);
+	}
+	if(GPS_EM_406A == gpsModel){
+		setupEM406();
+	}
+	if(GPS_MTEK_3329 == gpsModel){
+
+	}
+	//setupGpsImpl();
 	//now flush and restart
 	Serial1.flush();
 	Serial1.end();
@@ -201,6 +216,7 @@ float Gps::getMetersTo(float targetLat, float targetLon, float currentLat, float
 
 bool Gps::decode(byte inByte) {
 	// check if the character completes a valid GPS sentence
+	//Serial.print(inByte);
 	bool dc = (gpsSource->decode(inByte)!=0);
 	model->setValue(_ARDUINO_GPS_DECODE,dc);
 	//if(DEBUG)
@@ -279,15 +295,9 @@ PString Gps::getLonString(float lon, int decimals, int padding, PString str) {
  * setup implementations for various models of GPS.
  * Define the GPS in GPS.h
  */
-void Gps::setupGpsImpl(){
-	//setup based on GPS type - probably wants a more modular way if many GPS types appear
-	Serial.println("Setting GPS config..." );
-	int gpsModel = model->getValueInt(_ARDUINO_GPS_MODEL);
-	if(GPS_GENERIC == gpsModel){
-			Serial.println("Setting GPS to GENERIC" );
-	}
-	if(GPS_EM_406A == gpsModel){
-		Serial.println("Setting GPS to EM_406A" );
+void Gps::setupEM406(){
+
+		Serial.println(F("Setting GPS to EM_406A") );
 		//Serial1.begin(38400, 8, 1, 0); //gps
 		//set debug on
 		Serial1.println("$PSRF105,1*3E");
@@ -331,8 +341,10 @@ void Gps::setupGpsImpl(){
 		//Serial1.println("$PSRF100,1,38400,8,1,0*3D");
 		Serial.println(gpsSentence);
 	}
-	if(GPS_MTEK_3329 == gpsModel){
-		Serial.println("Setting GPS to MTEK_3329");
+
+void Gps::setupMTEK(){
+
+		Serial.println(F("Setting GPS to MTEK_3329"));
 		//setting update rate to 1Hz
 		Serial1.println("$PMTK220,1000*1F");
 		//setting the NMEA Output to get RMC, GGA, GSA & GSV.
@@ -366,8 +378,43 @@ void Gps::setupGpsImpl(){
 
 	}
 
+	//try switch to NMEA here
+		/*Serial1.print(0xA0);
+		Serial1.print(0xA2);
+		Serial1.print(0x00);
+		Serial1.print(0x18);
 
-}
+		Serial1.print(0x81);
+		Serial1.print(0x02);
+		Serial1.print(0x01);
+		Serial1.print(0x01);
+		Serial1.print(0x00);
+		Serial1.print(0x01);
+		Serial1.print(0x01);
+		Serial1.print(0x01);
+		Serial1.print(0x05);
+		Serial1.print(0x01);
+		Serial1.print(0x01);
+		Serial1.print(0x01);
+		Serial1.print(0x00);
+		Serial1.print(0x01);
+		Serial1.print(0x00);
+		Serial1.print(0x01);
+		Serial1.print(0x00);
+		Serial1.print(0x01);
+		Serial1.print(0x00);
+		Serial1.print(0x01);
+		Serial1.print(0x00);
+		Serial1.print(0x01);
+		Serial1.print(0x25);
+		Serial1.print(0x80);
+
+		Serial1.print(0x01);
+		Serial1.print(0x3A);
+		Serial1.print(0xB0);
+		Serial1.print(0xB3);*/
+
+
 
 
 

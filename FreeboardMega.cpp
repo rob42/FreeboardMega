@@ -133,7 +133,7 @@ void setup() {
 		Serial.println(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD1));
 	}
 
-	Serial1.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD1));
+	//Serial1.begin(signalkModel.getValueLong(_ARDUINO_SERIAL_BAUD1));
 
 	if (signalkModel.getValueBool(_ARDUINO_SEATALK)) {
 		if (DEBUG) Serial.println(F("Start seatalk - serial2 at 4800"));
@@ -253,7 +253,7 @@ void serialEvent1() {
 		// read from port 1 (GPS), send to port 0:
 		if (inputSerial1Complete) {
 			//if (MUX) nmea.printNmea(gpsSource.sentence());
-			Serial.println(gpsSource.sentence());
+			//Serial.println(gpsSource.sentence());
 			//loop every sentence
 			break;
 		}
@@ -337,11 +337,12 @@ void loop() {
 			wind.checkWindAlarm();
 			//levels.checkLvlAlarms();
 			alarm.checkAlarms();
-			//signalkModel.printVesselWrapper(&Serial);
+			//signalkModel.printConfigBranch(&Serial, true);
 			signalkModel.printVesselWrapper(&Serial);
 			jsonreader.reset();
 			//Serial.print("freeMemory()=");
 			//Serial.println(freeMemory());
+
 		}
 
 		execute = false;

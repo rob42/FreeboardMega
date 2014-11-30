@@ -66,7 +66,8 @@ private:
 	long detectRate(int rcvPin);
 	bool testMsg();
 	void resetGPS();
-	void setupGpsImpl();
+	void setupEM406();
+	void setupMTEK();
 	//bool gpsDecode;
 	//unsigned long gpsLastFix;
 
